@@ -1,0 +1,16 @@
+{
+  "name": "blaze",
+  "version": "1.0.0",
+  "description": "",
+  "license": "ISC",
+  "author": "Franco Valerio",
+  "type": "commonjs",
+  "main": "cypress.config.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "devDependencies": {
+    "cypress": "^13.17.0",
+    "next": "^15.1.4"
+  }
+}
