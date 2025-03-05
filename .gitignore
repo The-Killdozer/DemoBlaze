@@ -1,0 +1,13 @@
+node_modules
+cypress/videos/
+cypress/screenshots/
+cypress/downloads/
+cypress/fixtures/*.json
+cypress/reports/
+cypress/results/
+*.log
+dist/
+npm-debug.log
+yarn-error.log
+
+
