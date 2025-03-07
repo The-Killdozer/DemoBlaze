@@ -18,7 +18,7 @@ export class Header {
 
       header: {
         headerTitle: () => cy.get('#exampleModalLabel'),
-        btnCloseIcon: () => cy.get('#exampleModal button.close').find('span'),
+        btnCloseIcon: () => cy.get('#exampleModal button.close'),
       },
       body: {
         inputEmail: () => cy.get('#recipient-email'),
