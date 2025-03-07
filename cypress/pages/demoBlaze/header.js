@@ -26,16 +26,8 @@ export class Header {
         inputMessage: () => cy.get('#message-text'),
       },
       footer: {
-        btnCloseFooter: () =>
-          cy
-            .get('div#exampleModal')
-            .find('div.modal-footer')
-            .contains('button', 'Close'),
-        btnSendMessage: () =>
-          cy
-            .get('div#exampleModal')
-            .find('div.modal-footer')
-            .contains('button', 'Send message'),
+        btnCloseFooter: () => cy.get('#exampleModal button.btn.btn-secondary'),
+        btnSendMessage: () => cy.get('#exampleModal button.btn.btn-primary'),
       },
     },
 
@@ -44,7 +36,7 @@ export class Header {
 
       header: {
         headerTitle: () => cy.get('#videoModalLabel'),
-        btnCloseIcon: () => cy.get('#videoModal button.close').find('span'),
+        btnCloseIcon: () => cy.get('#videoModal button.close'),
       },
       body: {
         container: () => cy.get('#videoModal .modal-body'),
@@ -91,6 +83,18 @@ export class Header {
         btnClose: () => cy.get('#signInModal button.btn.btn-secondary'),
         btnSignup: () => cy.get('#signInModal button.btn.btn-primary'),
       },
+    },
+  };
+
+  actions = {
+    nav: {
+      clickLinkBrand: () => this.navBar.linkBrand().click(),
+      clickLinkHome: () => this.navBar.linkHome().click(),
+      clickLinkContact: () => this.navBar.linkContact().click(),
+      clickLinkAboutUs: () => this.navBar.linkAboutUs().click(),
+      clickLinkCart: () => this.navBar.linkCart().click(),
+      clickLinkLogin: () => this.navBar.linkLogin().click(),
+      clickLinkSignup: () => this.navBar.linkSignUp().click(),
     },
   };
 }
