@@ -1,4 +1,4 @@
-import { Header } from '../support/pages/header';
+import { Header } from '../pages/demoBlaze/header';
 
 describe('Header Test', () => {
   beforeEach(() => {
@@ -110,13 +110,13 @@ describe('Header Test', () => {
       .should('have.class', 'show')
       .and('have.css', 'display', 'block')
       .and('have.css', 'opacity', '1');
-      headerInstance.modals.modalAboutUs.container().then(($modal) => {
-        const modal = $modal[0];
-        return new Cypress.Promise((resolve) => {
-          modal.addEventListener('transitionend', resolve, { once: true });
-          cy.log('Transition Ended');
-        });
+    headerInstance.modals.modalAboutUs.container().then(($modal) => {
+      const modal = $modal[0];
+      return new Cypress.Promise((resolve) => {
+        modal.addEventListener('transitionend', resolve, { once: true });
+        cy.log('Transition Ended');
       });
+    });
 
     headerInstance.modals.modalAboutUs.footer.btnClose().click();
     headerInstance.modals.modalAboutUs.header

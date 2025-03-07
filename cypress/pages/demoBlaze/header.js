@@ -12,8 +12,10 @@ export class Header {
 
   modals = {
     modalsBody: () => cy.get('body.modal-open'),
+
     modalContact: {
       container: () => cy.get('div#exampleModal'),
+
       header: {
         headerTitle: () => cy.get('#exampleModalLabel'),
         btnCloseIcon: () => cy.get('#exampleModal button.close').find('span'),
@@ -36,9 +38,10 @@ export class Header {
             .contains('button', 'Send message'),
       },
     },
+
     modalAboutUs: {
       container: () => cy.get('#videoModal'),
-      fadeShow: () => cy.get('.modal.fade.show'),
+
       header: {
         headerTitle: () => cy.get('#videoModalLabel'),
         btnCloseIcon: () => cy.get('#videoModal button.close').find('span'),
@@ -55,9 +58,39 @@ export class Header {
         btnClose: () => cy.get('#videoModal button.btn.btn-secondary'),
       },
     },
-    modalLogin: {},
-    modalSignUp: {},
+
+    modalLogin: {
+      container: () => cy.get('div#logInModal'),
+
+      header: {
+        headerTitle: () => cy.get('#logInModalLabel'),
+        btnCloseIcon: () => cy.get('#logInModal button.close'),
+      },
+      body: {
+        inputEmail: () => cy.get('#loginusername'),
+        inputPassword: () => cy.get('loginpassword'),
+      },
+      footer: {
+        btnClose: () => cy.get('#logInModal button.btn.btn-secondary'),
+        btnLogin: () => cy.get('#logInModal button.btn.btn-primary'),
+      },
+    },
+
+    modalSignUp: {
+      container: () => cy.get('div#signInModal'),
+
+      header: {
+        headerTitle: () => cy.get('#signInModalLabel'),
+        btnCloseIcon: () => cy.get('#signInModal button.close'),
+      },
+      body: {
+        inputUsername: () => cy.get('#sign-username'),
+        inputPassword: () => cy.get('#sign-password'),
+      },
+      footer: {
+        btnClose: () => cy.get('#signInModal button.btn.btn-secondary'),
+        btnSignup: () => cy.get('#signInModal button.btn.btn-primary'),
+      },
+    },
   };
-
-
 }
