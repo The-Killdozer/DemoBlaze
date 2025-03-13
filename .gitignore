@@ -1,4 +1,5 @@
 node_modules
+cypress/reports
 cypress/videos/
 cypress/screenshots/
 cypress/downloads/
@@ -9,5 +10,5 @@ cypress/results/
 dist/
 npm-debug.log
 yarn-error.log
-
+C:\Users\Tach\Documents\Programación\Cypress\Proyectos\DemoBlaze\DemoBlaze\cypress\reports
 

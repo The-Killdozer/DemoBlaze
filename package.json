@@ -7,10 +7,15 @@
   "type": "module",
   "main": "cypress.config.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "cy:open": "cypress open",
+    "cy:tests:CHROME": "cypress run --spec cypress/e2e/*.cy.js --headed --browser chrome",
+    "cy:tests:ELECTRON": "cypress run --spec cypress/e2e/*.cy.js --headed",
+    "cy:tests:EDGE": "cypress run --spec cypress/e2e/*.cy.js --headed --browser edge"
   },
   "devDependencies": {
     "cypress": "^14.1.0",
+    "cypress-mochawesome-reporter": "^3.8.2",
     "next": "^15.1.4"
   }
 }
