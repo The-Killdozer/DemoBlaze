@@ -1,0 +1,2733 @@
+instalar node y chocolately luego del VSCode
+
+
+git clone https://github.com/coderyansolomon/cypress-course.git ---> CLONA LA CARPETA DESDE GITHUB A LA DIRECCIÓN EN LA QUE ESTAMOS, LUEGO TENGO QUE CARGAR ESA CARPETA AL PROYECTO EN VISUAL STUDIO
+
+PARA PROYECTO NUEVO --> 
+
+npm init --> SEGUIR LOS PASOS
+
+npm install cypress --save-dev
+
+"--save-dev" --> SIGNIFICA QUE LO GUARDA EN EL ARCHIVO "package.json" BAJO "devDependencies"
+
+cd cypress-course  ---> SE TRASLADA A LA CARPETA DESEADA, EN ESTE CASO "cypress-course"
+
+npx cypress open  ---> ABRE CYPRESS
+ 
+ls     --> MUESTRA LAS CARPETAS DESDE LA UBICACIÓN EN LA QUE ESTOY
+
+npm run dev   ---> PARA CORRER LA PÁGINA DE MANERA LOCAL
+
+
+--------------------------------- NEXT Y REACT ------------------------------------------------
+
+REACT ---
+
+REACT ES UNA BIBLIOTECA DE JAVASCRIPT PARA CONSTRUIR INTERFACES DE USUARIO (DESARROLLADO X FACEBOOK)
+SE ENCARGA DE ACTUALIZAR DE MANERA EFICIENTE SOLO LAS PARTES DE LA PÁGINA QUE CAMBIAN
+EJ: ACTUALIZACIÓN DE DATOS EN TIEMPO REAL SIN RECARGAR LA PÁGINA, REDES SOCIALES
+
+NEXT ---
+
+NEXT ES UN FRAMEWORK QUE EXTIENDE REACT CON CARACTERÍSTICAS ADICIONALES. SE ENFOCA EN EL RENDERIZADO 
+DEL LADO DEL SERVIDOR (SSR) Y EL RENDERIZADO ESTÁTICO. EL CONTENIDO PUEDE SER CARGADO EN EL SERVIDOR 
+ANTES DE SER ENVIADO AL NAVEGADOR
+
+
+
+
+npm install -D next ---> React.js y Next.js 
+
+COMPROBAR EL ARCHIVO cypress.config.cy QUE TENGA ESTA LÍNEA:
+
+const { defineConfig } = require("cypress");
+
+SINO, AGREGAR EN LA 1ER LÍNEA :
+
+const { defineConfig } = require("cypress");  -> Es el enfoque recomendado en la documentación de Cypress
+
+
+
+--------------------------------------------------------------------------------------------
+-------------------------------- CONFIGURAR INTELLISENSE -----------------------------------
+
+CREAR EL ARCHIVO jsconfig.json EN LA ROOT FOLDER 	
+
+
+{
+  "include": ["./node_modules/cypress", "cypress/**/*.js"]
+}
+
+
+
+
+
+
+PARA NO TENER QUE ABRIR CYPRESS MANUALMENTE ---> 
+
+EN EL ARCHIVO "package.json" :
+  "scripts": {
+
+    "cy:open": "cypress open",
+    "cy:tests:CHROME": "cypress run --spec cypress/e2e/SauceDemo/*.cy.js --headed --browser chrome",
+    "cy:tests:ELECTRON": "cypress run --spec cypress/e2e/SauceDemo/*.cy.js --headed",
+    "cy:tests:EDGE": "cypress run --spec cypress/e2e/SauceDemo/*.cy.js --headed --browser edge"
+
+    "cy:tests:ELECTRON:HEADLESS": "cypress run --spec cypress/e2e/SauceDemo/*.cy.js --"
+----EN ESTE CASO, AL NO INCLUÍR "--headed" SE CORRE LA PRUEBA SIN ABRIR EL BROWSER
+  },
+
+
+
+
+
+
+----------------------------------REPORTING ---> [Muy Bueno]
+
+------------------------------------- MOCHAWESOME --------------------------------------------------
+
+MOCHAWESOME  ---> https://www.npmjs.com/package/cypress-mochawesome-reporter
+
+
+--------------------------------------------------------------------------
+CON MÓDULO ES ["type": "module" - EN EL "package.json"]-------------------
+--------------------------------------------------------------------------
+
+ACTUALIZACION 13/03 !!!!!!!!!!! -------------------------------------------------------------
+
+1- EN LA CONSOLA ---> npm i --save-dev cypress-mochawesome-reporter
+2- EN EL ARCHIVO cypress.config.js :
+
+
+import { defineConfig } from 'cypress';
+import mochawesome from 'cypress-mochawesome-reporter/plugin.js';   ---> AGREGO EL IMPORT
+
+export default defineConfig({
+  e2e: {
+    baseUrl: 'https://www.demoblaze.com',    ----> LA BASE URL LA TENGO QUE PONER ADENTRO DE e2e
+    setupNodeEvents(on, config) {
+      // implement node event listeners here
+      mochawesome(on);                                               ----> AGREGO DENTRO DE SETUPNODEEVENTS
+    },
+  },
+  reporter: 'cypress-mochawesome-reporter',                         ----> AGREGO TODAS LAS ESPECIFICACIONES
+  reporterOptions: {
+    reportDir: 'cypress/reports',
+    charts: true,
+    reportPageTitle: 'DemoBlaze UI Tests',
+    embeddedScreenshots: true,
+    inlineAssets: true,
+    overwrite: false,
+    html: true,
+    json: true,
+    autoOpen: false,
+    code: true,
+    timestamp: 'longDate',
+    showPassed: true,
+    saveAllAttempts: false,
+  },
+});
+
+
+3- AGREGAR EN cypress/support/e2e.js
+
+import 'cypress-mochawesome-reporter/register';
+
+LUEGO AL CORRER LAS PRUEBAS CON npm run cy:tests:CHROME
+
+CREA LA CARPETA DENTRO DEL PROYECTO Y EL ARCHIVO HTML CON EL REPORT DE LA PRUEBA - BUENÍSIMO
+
+ES NECESARIO CORRER LAS PRUEBAS DESDE LA CONSOLA PARA QUE HAGA EL REPORTE HTML
+
+TAMBIÉN SE PUEDE AGREGAR VIDEOS 
+
+ignoreVideos ---> VIENE SETEADO EN FALSE POR DEFAULT 
+
+videoOnFailOnly --> AGREGA VIDEOS SOLO EN LAS FAILED TESTS. VIENE SETEADO EN FALSE POR DEFAULT
+
+
+
+
+
+
+
+
+
+
+------------------------------------------------------------------------------------------
+USANDO COMMONJS  ["type": "module" EN "package.json"]-------------------------------------
+------------------------------------------------------------------------------------------
+
+COMPROBAR, PODRÍA ESTAR OBSOLETO O HABER CAMBIADO ALGO DE LA CONFIG
+
+
+1- EN LA CONSOLA ---> npm i --save-dev cypress-mochawesome-reporter
+
+
+2- EN EL ARCHIVO cypress.config.js 
+
+module.exports = defineConfig({
+
+  // Configure the Mochawesome Reporter for generating test reports
+
+  reporter: 'cypress-mochawesome-reporter',
+  reporterOptions: {
+    reportDir: 'cypress/reports/sauce-demo-ui-tests-report',
+    charts: true,
+    reportPageTitle: 'Sauce Demo UI Tests',
+    embeddedScreenshots: true,
+    inlineAssets: true,
+    overwrite: false,
+    autoOpen: false,
+    code: true,
+    timestamp: 'longDate',
+    showPassed: true,
+    saveAllAttempts: false,
+  },
+
+  e2e: {
+    setupNodeEvents(on, config) {
+      // implement node event listeners here
+      require('cypress-mochawesome-reporter/plugin')(on);     ----> EN e2e SOLO ESTA LINEA
+    },
+  },
+});
+
+LA BASE URL LA TENGO QUE PONER ADENTRO DE e2e:
+
+
+3- AGREGAR EN cypress/support/e2e.js
+
+import 'cypress-mochawesome-reporter/register';
+
+LUEGO AL CORRER LAS PRUEBAS CON npm run cy:tests:CHROME
+
+CREA LA CARPETA DENTRO DEL PROYECTO Y EL ARCHIVO HTML CON EL REPORT DE LA PRUEBA - BUENÍSIMO
+
+ES NECESARIO CORRER LAS PRUEBAS DESDE LA CONSOLA PARA QUE HAGA EL REPORTE HTML
+
+TAMBIÉN SE PUEDE AGREGAR VIDEOS 
+
+ignoreVideos ---> VIENE SETEADO EN FALSE POR DEFAULT 
+
+videoOnFailOnly --> AGREGA VIDEOS SOLO EN LAS FAILED TESTS. VIENE SETEADO EN FALSE POR DEFAULT
+
+
+
+
+-----------------------------------------------------------------------------------------------
+             ---------------------- CYPRESS REAL EVENTS ------------------------- BUENÍSIMO
+-----------------------------------------------------------------------------------------------
+
+PLUGIN QUE SIMULA EVENTOS (ACCIONES) REALES, YA QUE CYPRESS NO REALIZA DE MANERA NATIVA SIERTAS
+ACCIONES- 
+
+VER PROBLEMA CON .inoke() Y .trigger() ---
+
+
+
+https://github.com/dmtrKovalenko/cypress-real-events
+
+npm install cypress-real-events
+
+EN LA CARPETA SUPPORT, EN EL ARCHIVO - commands.js:
+
+import "cypress-real-events";
+
+Y LISTO, AL ESCRIBIR ".real...." VA A DAR LA LISTA DE COMANDOS
+
+PARA MI PROBLEMA DEL DROPDOWN, USÉ ".realHover()" Y FUNCIONÓ 
+
+
+
+
+
+
+-----------------------------------------------------------------------------------------------
+------------------------------------------- TESTING -------------------------------------------
+-----------------------------------------------------------------------------------------------
+
+------------------------------------------- BASE URL ------------------------------------------
+
+SI SON PÁGINAS EN ENTORNO DE PRODUCCIÓN, ES POSIBLE QUE NO FUNCIONEN O NO CARGUEN. EN ALGUNOS
+CASOS ES NECESARIO AGREGAR 
+
+EN EL cy.visit('https://example.com', {headers: {"Accept-Encoding": "gzip, deflate"}})
+
+EN LAS PRUEBAS, LA BaseUrl SE PONE EN EL ARCHIVO cypress.config.js
+-- HAY DOS FORMAS: 
+
+---------------------------------
+1- DIRECTAMENTE EN e2e -> CARGA AUTOMÁTICAMENTE LA PAGINA 
+---------------------------------
+
+ESTE CASO HAY QUE PONER EN LA PRUEBA - cy.visit('/'); EN "beforeEach()"
+!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
+
+module.exports = {
+
+  e2e: {
+
+    baseUrl: 'https://www.demoblaze.com',
+    
+	setupNodeEvents(on, config) {
+    },
+  },
+};
+
+
+
+------------------------------------
+2- DENTRO DE "module.exports" : 
+------------------------------------
+
+EN EL ARCHIVO CYPRESS.CONFIG.JS AGREGAR :
+
+module.exports = defineConfig({ 
+
+  env: {
+    application_URL: "https://www.examplepage.com",
+  },
+
+EN ESTE CASO SE CREA UN COMANDO PERSONALIZADO (commands.js) PARA USAR LA VARIABLE DE ENTORNO
+
+Cypress.Commands.add("goToApplication", () => {
+
+  const url = Cypress.env("application_URL"); // Obtén la URL desde cypress.config.js
+
+  cy.visit(url); // Navega a la URL
+});
+
+EN EL TEST USO EL CUSTOM METHOD -> cy.goToApplication(); EN "beforeEach()"
+
+
+
+
+
+
+-------------------------------- CYPRESS CLOUD [ANTIGUO DASHBOARD] ----------------------------
+
+https://www.cypress.io/cloud
+
+ES UN SERVICIO DE AMBIENTE DE CI EN EL QUE SE REGISTRAN TODAS LAS PRUEBAS REALIZADAS 
+
+
+
+-------------------------------- COMANDOS PERSONALIZADOS --------------------------------------
+
+EN EL ARCHIVO "commands.js" 
+
+SIEMPRE USAR EL COMANDO: 
+
+Cypress.Commands.add('nombre del comando', () => { ACCIÓN A REALIZAR })
+
+EJEMPLO PARA IR A LA PAGINA USANDO LAS VARIABLES DE ENTORNO
+
+Cypress.Commands.add('goToApplication', () => {
+
+const url = Cypress.env('application_URL');     ---> LLAMO A LA VARIABLE DE ENTORNO
+cy.visit(url);
+
+};
+
+
+OTRO COMANDO PERSONALIZADO PARA HACER UN "cy.get()" SIEMPRE CON "[data-test="nombre"]"
+
+Cypress.Commands.add('getDataTest', (dataTestSelector) => {
+    return cy.get(`[data-test="${dataTestSelector}"]`)
+})
+
+------------------------------------- PARA TESTING ----------------------------------------------
+
+EN EL ARCHIVO package.json
+
+PARA CORRER LOS TESTS EN CHROME:
+
+"cy:tests:CHROME": "cypress run --spec cypress/e2e/SauceDemo/*.cy.js --headed --browser chrome",
+
+PARA CORRER LOS TESTS EN ELECTRON:
+
+"cy:tests:ELECTRON": "cypress run --spec cypress/e2e/SauceDemo/*.cy.js --headed",
+
+PARA CORRER LOS TESTS EN EDGE
+
+"cy:tests:EDGE": "cypress run --spec cypress/e2e/SauceDemo/*.cy.js --headed --browser edge",
+
+PARA CORRER LOS TESTS SIN OBSERVAR LO QUE SUCEDE
+
+"cy:tests:ELECTRON:HEADLESS": "cypress run --spec cypress/e2e/SauceDemo/*.cy.js --"
+
+LUEGO EN LA CONSOLA ESCRIBIR :
+
+npm run cy:tests:"navegador" 
+
+----------------------------------------------------------------------------------------------------
+--------------------------------------- TAGGING [GREP] ---------------------------------------------
+
+
+A LA HORA DE EJECUTAR LOS TEST CASES, CUANDO SE TIENEN MUCHOS, SE PUEDE HACER UN TAGGING PARA
+SELECCIONAR LOS TEST QUE DESEO EJECUTAR
+
+1 - INSTALAR PLUGIN -> npm i -D @cypress/grep
+2 - IMPORTAR PLUGIN -> EN EL ARCHIVO e2e, EN LA CARPETA SUPPORT -> 
+
+import registerCypressGrep from '@cypress/grep/src/support'
+registerCypressGrep()
+
+LUEGO EN LOS TESTS SE AGREGA SEGUIDO EN EL NOMBRE 
+
+it("@regression @sanity [LOGIN]"       ----> EN ESTE USO 2 TAGS PARA FILTRAR 
+
+it("@regression [GITHUB] Page Title"   ----> EN ESTE SOLO 1 TAG
+
+
+LUEGO EN EL ARCHIVO "cypress.config.js"--> 
+ESPECIFICO AL FINAL EL TIPO DE GREP QUE QUIERO USAR PARA FILTRAR 
+
+EN ESTE CASO USO "grep=@sanity" Y "grep=@regression" QUE SON LOS QUE PUSE EN EL TEST
+PARA DESPUES CORRER LOS TESTS DESDE LA CONSOLA 
+
+    "cy:tests:CHROME:SANITY": "cypress run --spec cypress/e2e/SauceDemo/*.cy.js --headed --browser chrome --env grep=@sanity",
+
+    "cy:tests:CHROME:REGRESSION": "cypress run --spec cypress/e2e/SauceDemo/*.cy.js --headed --browser chrome --env grep=@regression"
+
+
+
+-------------------------------------- FIXTURES [ACCESORIOS] ---------------------------------------
+
+A LA HORA DE USAR CREDENCIALES O DATOS, PARA NO TENER QUE AGREGARLOS EN LAS PRUEBAS, SE GUARDAN
+EN LA CARPETA FIXTURES, EN CADA ARCHIVO JSON ESPECÍFICO PARA SU FUNCIÓN.
+
+ EN ESTE EJEMPLO GUARDO LAS CREDENCIALES PARA HACER EL LOGIN :
+ CREO EL ARCHIVO "loginCredentials.json"
+{
+  "Comment #1": "Credentials - VALID",
+  "valid_username_1": "standard_user",
+  "valid_password_1": "secret_sauce"
+}
+
+DESPUÉS TENGO QUE LLAMAR ESTAS VARIABLES EN LAS PAGES -> AMPLIAR LUEGO CON POM
+
+SIGUIENDO EL EJEMPLO ANTERIOR:
+
+  const loginCredentials = require("/cypress/fixtures/loginCredentials.json");
+  const valid_username_1 = loginCredentials.valid_username_1;
+  const valid_password_1 = loginCredentials.valid_password_1;
+
+
+
+
+---------------------------------------------------------------------------------------------------
+-------------------------------------------- ATRIBUTOS --------------------------------------------
+---------------------------------------------------------------------------------------------------
+
+<alt> ----> 
+
+El atributo alt en HTML se usa para especificar texto alternativo para imágenes y otros elementos no textuales (<img>, <area>, <input type="image">)
+
+Ejemplo de Uso:
+
+<img src="gato.jpg" alt="Un gato durmiendo en un sofá.">
+
+
+---------------------------------------------------------------------------------------------------
+---------------------------------------- SELECTORES CYPRESS ---------------------------------------
+---------------------------------------------------------------------------------------------------
+
+PLUGIN PARA USAR XPATH ----> npm install -D cypress-xpath
+
+LUEGO IR AL ARCHIVO "e2e" EN LA CARPETA SUPPORT E IMPORTAR EL PLUGIN:
+
+import 'cypress-xpath'
+
+LUEGO SE USA DE ESTA MANERA :
+
+ cy.xpath('//input[@data-test="name"]').type("someText");
+
+
+
+
+------------ Selectores x Atributos -----------------
+
+Cypress recomienda usar atributos personalizados para identificar elementos
+
+<button data-cy="login-button">Login</button>
+
+cy.get('[data-cy="login-button"]')
+
+
+OTRO EJEMPLO CON 2 ATRIBUTOS A LA VEZ:
+
+cy.get('[data-test="accordion-item-1"] div[role="button"]').click()
+
+------------- Selectores por id --------------------
+
+<div id="main-content"></div>
+
+En Cypress:
+
+cy.get('#main-content')
+
+------------ Selectores por texto "cy.contains()" ---------------
+
+<button>Submit</button>
+
+En Cypress:
+
+cy.contains('Submit')
+
+
+Puedes usarlo para buscar texto dentro de un tipo de elemento específico:
+
+cy.contains('button', 'Submit') -----> Busca un botón que contenga "Submit"
+
+
+------------- Selectores por clases CSS  -----------------
+
+1. Seleccionar por una sola clase
+<button class="btn-primary">Submit</button>
+
+cy.get('.btn-primary') // Selecciona el botón por la clase "btn-primary"
+
+
+2. Seleccionar por múltiples clases
+<button class="btn btn-primary">Submit</button>
+
+cy.get('.btn.btn-primary') // Selecciona el botón que tiene ambas clases "btn" y "btn-primary"
+
+
+3. Seleccionar por una clase que contiene una palabra específica
+<div class="card-item product-card"></div>
+
+cy.get("[class*='card']") // Selecciona cualquier elemento que contiene "card" en la clase
+
+cy.get("[class^='card']") // Selecciona cualquier clase que comienza con "card"
+
+cy.get("[class$='card']") // Selecciona cualquier clase que termina con "card"
+
+
+
+----------------------------- Localizar por Texto contenido y elemento ---------------------
+
+1. Localizar por texto contenido--------------
+
+<a href="/register">Register</a>
+
+cy.get('a').contains('Register') // Busca un enlace que contiene el texto "Register"
+
+2. Usar clases junto con texto-------------------
+
+<a href="/register" class="nav-link">Register</a>
+
+cy.get('a.nav-link').contains('Register') // Busca un enlace con la clase "nav-link" 
+					     que contiene el texto "Register"
+
+3. Seleccionar un botón por texto------------
+
+<button class="btn-primary">Submit</button>
+
+cy.get('button').contains('Submit') // Selecciona el botón que contiene "Submit"
+
+
+4. Buscar dentro de un contenedor específico -----------------
+
+<div class="form">
+  <button>Submit</button>
+</div>
+
+cy.get('.form').contains('Submit') // Busca "Submit" dentro del contenedor con la clase "form"
+
+
+----------------- Selectores combinados ----------------------------
+
+
+1. Seleccionar descendientes ----------------
+AL DEJAR UN ESPACIO ENTRE LOS ELEMENTOS A BUSCAR, BUSCARÁ EN LOS ELEMENTOS HIJOS Y SUB-HIJOS
+
+<div class="form">
+  <input type="text" class="input-field" />
+</div>
+
+cy.get('.form .input-field') // Selecciona el input dentro de la clase "form"
+
+
+2. Seleccionar hijos directos ------------------
+
+<div class="form">
+  <label class="form-label">Name:</label>
+  <input type="text" class="form-input" />
+</div>
+
+cy.get('.form > .form-label') // Selecciona el hijo directo con la clase "form-label"
+
+3. Seleccionar por atributos y texto --------------------
+
+<a href="/login" class="nav-link">Login</a>
+
+cy.get('a[href="/login"]').contains('Login') // Selecciona el enlace con href="/login" 
+						que contiene "Login"
+
+
+
+--------------------------- Selectores avanzados ----------------------------
+
+1. Buscar por índice -------------
+
+<ul>
+  <li>Item 1</li>
+  <li>Item 2</li>
+  <li>Item 3</li>
+</ul>
+
+cy.get('li').eq(1)      ------>  Selecciona el segundo elemento (índice 1)
+
+
+2. Seleccionar con pseudo-clases ----------------
+
+<ul>
+  <li class="item">Item 1</li>
+  <li class="item">Item 2</li>
+  <li class="item">Item 3</li>
+</ul>
+
+cy.get('.item:last-child') // Selecciona el último elemento con la clase "item"
+cy.get('.item:nth-child(2)') // Selecciona el segundo elemento con la clase "item"
+
+
+nth-child se usa 
+
+
+3. USANDO VARIOS, TAG, ID Y CLASSNAME ---------------
+
+SYNTAX: tagName.classValue[AttributeName='AttributeValue']
+SYNTAX: tagName#idValue[AttributeName='AttributeValue']
+
+EJEMPLO:input.signup[type='submit'][value='Sign me up']
+EJEMPLO:input#submit_btn[type='submit'][value='Sign me up']
+
+
+--------------------------------------------------------------------------------------------
+----------------------------------------------COMANDOS -------------------------------------
+--------------------------------------------------------------------------------------------
+
+---------------- "click()" ----------------
+
+.click()
+
+.dbclick()
+
+.rightclick()  ---> SE USA CUANDO SE CUSTOMIZA EL RIGHT CLICK EN LA PÁGINA WEB
+
+
+
+-----------------".type()" -----------------
+
+SE USA PARA ESCRIBIR EN CAMPOS PERO TAMBIÉN SE PUEDE SELECCIONAR TEXTO Y REALIZAR ACCIONES:
+
+.type('{selectall}{del}') ----> SERÍA UN "clear()", DONDE PRIMERO SELECCIONA TODO EL TEXTO Y LUEGO
+				BORRA
+
+.type('{selectall}') ----> SELECCIONA TODO EL TEXTO 
+
+
+// 'altKey' will be true while typing 'foo'
+cy.get('input').type('{alt}foo', { release: false })
+// 'altKey' will also be true during 'get' and 'click' commands
+cy.get('button').click()
+
+Do a shift + click ----->
+
+// execute a SHIFT + click on the first <li>
+// {release: false} is necessary so that
+// SHIFT will not be released after the type command
+cy.get('body').type('{shift}', { release: false }).get('li:first').click()
+
+
+
+---------------- SCROLL ----------------
+
+scrollTo() ---->
+
+.scrollTo(position)
+  .scrollTo(x, y)
+  .scrollTo(position, options)
+  .scrollTo(x, y, options)
+
+cy.scrollTo('bottom');
+
+cy.get('#movies-list').scrollTo('center')
+
+scrollIntoView() ----->
+
+.scrollIntoView()
+.scrollIntoView(options)
+
+cy.get('#footerPanel > ul.visit > li:nth-child(2) > a').scrollIntoView();
+
+----------------- .then() --------------------
+
+THEN SE UTILIZA PARA TRABAJAR CON EL ELEMENTO UNA VEZ QUE CYPRESS LO HA OBTENIDO
+
+SE USA PARA ENCAPSULAR O PARA USAR UNA CALLBACK FUNCTION EN EL CASO DE QUE SE QUIERA TRABAJAR DE MANERA
+SINCRÓNICA - PARA QUE DEVUELVA EL YELDED OBJECT- YA QUE CYPRESS TRABAJA DE MANERA ASINCRÓNICA
+
+
+    headerInstance.modalContact.container().then(($modal) => {
+      const modal = $modal[0];
+      return new Cypress.Promise((resolve) => {
+        modal.addEventListener('transitionend', resolve, { once: true });
+        headerInstance.modalContact.header.btnClose().click();
+      });
+    });
+
+
+
+.then(($modal) => { ... })
+¿Qué hace?
+Cypress utiliza promesas para manejar acciones asíncronas. La función then recibe el resultado de 
+la promesa anterior (el contenedor del modal) y te permite trabajar con él.
+
+Resultado:
+El contenedor del modal ($modal) está disponible dentro de la función. Aquí es donde comienza la lógica personalizada.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+EN ESTE CASO EL THEN LO USO PARA GUARDAR EN UNA VARIABLE UN TEXTO DEL OBJETO DEVUELTO
+
+
+
+    it('Closures & Variables', () => {
+
+        cy.get('#showSmallModal').then($btnModal => {
+
+            const smallModalText = $btnModal.text();
+            cy.log(smallModalText);
+
+        })
+
+
+
+---------------- .text() --------------------
+
+Cuando usas un comando como cy.get(), este devuelve un elemento envuelto en un objeto Cypress chainable
+No es un comando nativo de Cypress, sino una FUNCIÓN de jQuery, ya que Cypress integra jQuery 
+en su funcionalidad.
+debe usarse dentro de un callback que acceda al elemento real.
+
+cy.get('h1') // Obtiene el elemento <h1>
+  .then(($el) => {
+
+    const text = $el.text(); // Accede al texto usando .text()
+
+    expect(text).to.equal('Expected Text'); // Realiza una assertion
+  });
+
+
+SE USA CUANDO TENÉS QUE HACER OPERACIONES COMPLEJAS CON EL TEXTO
+
+Ejemplo: Verificar que el texto contiene un patrón específico
+
+CUANDO QUERES COMPARAR PARTES ESPECÍFICAS DEL TEXTO
+
+Ejemplo: Extraer solo una palabra del texto
+
+cy.get('.header')
+  .then(($el) => {
+    const text = $el.text();
+    const firstWord = text.split(' ')[0];
+    expect(firstWord).to.equal('Welcome');
+  });
+
+PARA NORMALIZAR O LIMPIAR EL TEXTO
+
+Ejemplo: Comparar texto sin considerar espacios extras
+
+cy.get('.title')
+  .then(($el) => {
+    const text = $el.text().trim(); // Limpia espacios
+    expect(text).to.equal('Expected Title');
+  });
+
+CUANDO NECESITAS USAR EL TEXTO COMO ENTRADA PARA OTRO PASO
+
+Ejemplo: Usar texto capturado en otro campo
+
+cy.get('.user-id')
+  .then(($el) => {
+    const userId = $el.text();
+    cy.get('#input-field').type(userId); // Usa el texto como entrada
+  });
+
+CUANDO EL TEXTO INCLUYE FORMATO ESPECIAL
+
+Ejemplo: Ignorar etiquetas HTML dentro del texto
+Si el texto contiene etiquetas HTML, estilos o elementos hijos que necesitas excluir, .text() extrae únicamente el contenido de texto visible.
+
+<div class="message">
+  Hello <strong>world</strong>!
+</div>
+
+cy.get('.message')
+  .then(($el) => {
+    const text = $el.text(); // "Hello world!"
+    expect(text).to.equal('Hello world!');
+  });
+
+MANEJAR CONTENIDO DINÁMICO QUE DEPENDE DEL DOM
+
+<div class="status">Active</div>  Después de cierto tiempo, podría cambiar a:
+
+<div class="status">Inactive</div> O incluso a:
+
+<div class="status">Pending</div>
+
+
+cy.get('.status')
+
+  .then(($el) => {
+
+    const text = $el.text().trim();          ----> Limpia espacios en blanco alrededor del texto
+
+    cy.log(`Texto actual del estado: ${text}`);     ----> Imprime el texto en los logs de Cypress
+
+    const validStatuses = ['Active', 'Inactive', 'Pending'];     ----> Lista de valores válidos
+
+    expect(validStatuses).to.include(text);         ----> Verifica si el texto está en la lista
+
+  });
+
+
+---------------- .selectFile() ---------------
+
+A LA HORA DE SUBIR UN ARCHIVO, SE PUEDE USAR ESTE COMANDO 
+
+cy.get('button.btn > input[type="file"]').selectFile('C:\\path\\fileName.txt')
+
+SE PUEDEN SELECCIONAR VARIOS ARCHIVOS A LA VEZ:
+
+.selectFile([file1, file2, ...])
+
+
+EN EL CASO QUE LA OPCIÓN PARA SUBIR UN ARCHIVO NO ESTÉ VISIBLE, SE PUEDE FORZAR PARA SUBIRLO
+
+cy.get('button.dropdown-item > input[type="file"]').selectFile('C:\\path\\fileName.txt', {force: true})
+
+
+---------------- .trigger() ----------------
+
+PARA REALIZAR ACCIONES SIMULADAS, PRINCIPALMENTE CON EL MOUSE 
+
+.trigger('mouseover', { force: true });
+
+cy.get('li.menu-item-has-children').trigger('mousedown', 'center')
+
+mouseover
+mouseenter
+mouseup
+mousedown
+mouseleave
+
+Y MUCHOS MÁS
+
+TENER EN CUENTA QUE EN EL DOM, EN LA PARTE DE EVENT LISTENERS, SE ENCUETRA ESPECÍFICAMENTE LOS
+ELEMENTOS DEL DOM QUE SE VEN AFECTADOS POR ESOS MOVIMIENTOS
+
+PUEDE OCURRIR QUE CYPRESS NO REALIZE CIERTAS ACCIONES QUE DE MANERA MANUAL OCURREN, COMO UN HOVER OVER
+DE UN MENU DESPLEGLABLE, EN ESE CASO SE USA ".invoke()", PERO ANTES, DETERMINAR CUAL ES EL MOTIVO DEL
+PROBLEMA, USANDO UNA ASSERTION, PARA COMPROBAR QUE EL SUB MENÚ SE VUELVE VISIBLE O SI CAMBIA LA 
+OPACIDAD [VER .invoke()]
+
+
+
+
+-----------------"cy.log()"-----------------
+
+PARA QUE APAREZCA UN MENSAJE EN EL LOG DE LA PRUEBA. UTIL PARA ESPECIFICAR COSAS EN EL LOG
+SIRVE PARA QUE CUANDO CORRO LOS TEST MANUALMENTE, EN LA CONSOLA DE CYPRESS SE MUESTRE EL MENSAJE ESPERADO
+SE PUEDE PONER EN LOS METHODS DE LA BASEPAGE PARA SABER QUE INFO SE USÓ - NO MUY PRÁCTICO
+
+
+
+-----------------".as()" -------------------
+
+Asignar un alias: El método .as() guarda el elemento seleccionado o el resultado del comando con un nombre de alias. Esto es útil para evitar repetir el selector en varias partes de la prueba.
+
+cy.get('[data-test="subscribe-form"]').find('input').as('subscribe-input')
+
+
+cy.get('@subscribe-input').type('user@example.com') // Escribe en el campo de entrada
+
+
+EJEMPLOS:
+
+cy.get('[data-test="subscribe-form"]').find('input').as('subscribe-input')
+cy.get('@subscribe-input').type('user@example.com')
+cy.get('@subscribe-input').should('have.value', 'user@example.com')
+
+
+Encadenamiento dinámico: Puedes asignar alias en el medio de cadenas complejas de comandos.
+
+
+cy.get('table').find('tr').eq(2).as('thirdRow')
+cy.get('@thirdRow').should('contain.text', 'Expected Value')
+
+
+----------------------------- .wrap() --------------------------------- ??
+
+
+------------------------------".title()" --------------------------
+
+cy.visit('https://example.cypress.io')
+
+cy.title().should('include', 'Kitchen Sink')
+
+
+
+--------------------------------".its()" --------------------------
+
+EN LAS RESPUESTAS, PUEDE ACCEDER A DIFERENTES PROPIEDADES O PUEDE ACCEDER A LOS INDEX DE ARRAYS
+
+OBTIENE EL VALOR DE LA PROPIEDAD DEL SUJETO SELECCIONADO PREVIAMENTE
+
+EN ARRAYS ----
+
+cy.wrap(["Wai Yan", "Yu"]).its(1).should("eq", "Yu") // true
+
+EN OBJETOS ----
+
+cy.wrap({ age: 52 }).its("age").should("eq", 52) // true
+
+TAMBIÉN SE PUEDEN USAR CON REQUEST()
+
+cy.request().its('body')
+
+
+------------------------------".invoke()" ------------------------- ??
+
+PARA EXTRAER EL TEXTO DE UN ELEMENTO QUE LUEGO COMPARO CON OTRO TEXTO -->
+
+cy.get('#example-modal-sizes-title-sm')
+            .invoke('text')
+            .then((actualText) => {                              
+            expect(actualText.trim().toLowerCase()).to.eq(smallModalText.toLowerCase());
+                });
+
+
+
+EN ESTE CASO, ES UN SUB-MENÚ QUE SE MUESTRA CUANDO HAGO UN HOVER OVER, PERO QUE EN CYPRESS NO LO
+MUESTRA DIRECTAMENTE USANDO ".trigger()" ASI QUE SE PUEDE USAR INVOKE.
+
+SIEMPRE SE TIENE QUE HACER EN EL PARENT DIRECTO DE LA LISTA QUE CONTIENE LOS ELEMENTOS A MOSTRAR
+
+PROBAR CON:
+
+.invoke('show')
+
+.invoke('animate')
+
+
+PARA CAMBIAR LAS PROPIEDADES DEL ELEMENTO SIN ALTERAR LAS DEMÁS, SE USA:
+
+.invoke('css', 'nombrePropiedad', 'valorNuevo')
+
+PRIMERO ME DABA UN ERROR QUE EL ELEMENTO NO ESTABA VISIBLE. ENTONCES USÉ:
+.invoke('css', 'visibility', 'visible')
+
+DESPUÉS ME DABA UN ERROR QUE LA OPACIDAD DEL ELEMENTO ERA 0. ENTONCES USÉ:
+.invoke('css', 'opacity', '1');
+
+A veces, el menú usa múltiples propiedades (display, visibility, opacity) para controlar su visibilidad. PARA FORZAR TODAS LAS PROPIEDADES RELEVANTES:
+
+cy.get('ul.sub-menu')
+  .invoke('css', 'display', 'block')            ---->   Si el menú depende de la propiedad display
+  .invoke('css', 'visibility', 'visible')
+  .invoke('css', 'opacity', '1');
+cy.get('ul.sub-menu').should('be.visible');
+
+AL FINAL, PARA MEJORAR EL CÓDIGO, SE PUEDE ESCRIBIR ASÍ:    ----!!!!! OJO !!!!!!!-----
+        
+	cy.get('li#menu-item-218225')
+        .find('ul.sub-menu')
+        .invoke('attr', 'style', 'visibility: visible; opacity: 1;')
+        .should('be.visible');
+    
+Cuando usas .invoke('attr', 'style', 'propiedad1: valor1; propiedad2: valor2;'), le estás diciendo
+a Cypress que agregue o reemplace todo el contenido del atributo style del elemento.
+Sobrescribe completamente el atributo style, eliminando cualquier otra regla CSS en línea que ya
+estuviera definida.
+
+
+
+
+
+
+
+
+
+
+
+
+------------------------------------- "cy.request()" --------------------------------------------
+
+PERMITE HACER SOLICITUDES HTTP (GET, POST, PUT, DELETE) DIRECTAMENTE DESDE LA PRUEBA Y ES
+INDEPENDIENTE DE LA INTERFAZ GRÁFICA - SE USA EN INTEGRATION TESTS Y VALIDACIÓN DE APIs
+
+
+cy.request('/users/1').its('body').should('deep.eq', { name: 'Jane' })
+
+El método por defecto de cy.request() es GET si no se especifica.
+.its('body'):Extrae una propiedad específica del objeto de respuesta
+
+
+
+SINTAXSIS BÁSICA
+
+cy.request({
+  method: 'GET',                              ---- Método HTTP (GET, POST, PUT, DELETE, etc.)
+  url: '/api/users',                          ---- URL relativa o absoluta del endpoint
+  headers: { Authorization: 'Bearer token' },  --- (Opcional) Encabezados HTTP
+  body: { name: 'John Doe' },             --- (Opcional) Datos enviados en el cuerpo de la solicitud
+  headers: { Authorization: 'Bearer myToken123' },  - Solicitudes con autenticación
+  failOnStatusCode: false,       --- Evitar que Cypress falle automáticamente en códigos de error
+}).then((response) => {
+  // Validar la respuesta
+  expect(response.status).to.eq(200)           --- Verificar el código de estado
+  expect(response.status).to.eq(404) 
+  expect(response.status).to.eq(201)             --- Validar que se creó un recurso (POST)
+  expect(response.body).to.have.property('name', 'John Doe')      --- Validar datos
+  expect(response.body).to.have.length.greaterThan(0)    ----- Verificar que haya datos
+  expect(response.body).to.have.property('name', 'John Doe') -- Validar datos
+  expect(response.headers).to.have.property('content-type', 'application/json') -- Validar 
+										   encabezados
+})
+
+
+-------------------------------------- POST REQUESTS --------------------------------------------------
+
+cy.request({
+  method: 'POST',                      
+  url: 'https://examplewebsite.com/api/users',
+  body: {
+    username: 'testUser',
+    email: 'test@example.com'
+  },
+
+OTRA FORMA DE ESCRIBIRLO ----> 
+
+cy.request('POST', 'https://examplewebsite.com/api/users', {
+  username: 'testUser',
+  email: 'test@example.com'
+})
+  .its('status')
+  .should('eq', 201);
+
+
+OTRA MANERA ES USANDO VARIABLES
+
+   const endPoint = 'https://reqres.in/api/users'
+
+    const newUserObject = {
+        "name": "Tizziano",
+        "job": "Tennis Player"
+    }
+
+    const addUser = newUser => {
+        cy.request('POST', endPoint, newUser)
+    }
+
+it.only('Add a User', () => {
+        addUser(newUserObject)
+
+
+
+
+------------------- Validación de la respuesta ------------------
+
+La respuesta de cy.request() incluye:
+
+response.status: Código de estado HTTP (ej. 200, 404, 500).
+response.body: Datos devueltos por la API.
+response.headers: Encabezados de la respuesta.
+response.duration: Tiempo que tomó la solicitud.
+
+
+------ OTRA MANERA DE EVALUAR LOS REQUESTS -------
+
+
+        cy.request('https://reqres.in/api/users?page=2')
+        .its('status')
+        .should('eq', 200);
+
+        cy.request('https://reqres.in/api/users?page=2')
+        .its('body.data')                                  ---> ACCEDE A LA PROPIEDAD DATA DENTRO DEL BODY
+        .should('have.length', 6)
+
+
+    it('Loading of Initial Items - Test', () => {
+
+        cy.request('https://reqres.in/api/users?page=2').then((response) => {
+            console.log(response.body);
+            console.log(apiItems);
+            expect(response.body).to.deep.equal(apiItems);
+     
+        })
+    })
+
+    it('Loading of Initial Items (Variation) - Test', () => {
+
+        cy.request('https://reqres.in/api/users?page=2')
+        .its('body')
+        .should('deep.eq', apiItems)
+    })
+
+
+EN AMBOS CASOS SE TIENE QUE UTILIZAR "DEEP EQUAL" :
+
+Propósito: Realiza una comparación profunda entre el contenido de los objetos, no solo sus referencias.
+
+Uso principal: Ideal para comparar objetos o arrays completos, verificando cada propiedad y valor.
+
+Ventaja: Permite validar que dos objetos tienen la misma estructura y contenido, incluso si son instancias diferentes en memoria.
+
+
+------------- VALIDAR CONTENIDO DE OBJETOS CON UN EACH() PARA ITERAR SOBRE CADA OBJETO ------------
+
+   it('JSON Schema Validation', () => {
+        cy.request('https://reqres.in/api/users?page=2')
+        .its('body.data')
+        .each((object) => {
+            expect(object).to.have.all.keys('id', 'email', 'first_name', 'last_name', 'avatar')
+        })
+    })
+
+-------------- USANDO EN beforeEach() EL .request() Y as() ------------------------
+
+describe('API testing with Cypress', () => {
+    beforeEach(() => {
+        cy.request('GET', 'https://reqres.in/api/users?page=2').as('getRequest');
+    })
+
+
+    it('Using Alias Request', () => {
+        cy.get('@getRequest').should(response => {          ---> COMBINANDO should() Y expect()
+        expect(response.body.data).to.have.length(6)
+        expect(response).to.have.property('headers')
+        })
+    })
+
+
+
+
+
+
+----------------------------------------------------------------------------------------------------
+
+
+
+----------------------------".find()" -------------------
+UNA VEZ QUE SE USA ".get()" O ".contains()" SE PUEDE ANEXAR ".find()" PARA ESPECIFICAR MÁS
+TAMBIÉN PAR ENVIAR DATOS
+
+cy.get('.articles').find('p').contains('Advanced Cypress Techniques').click();
+cy.get('form').find('input').should('not.have.class', 'disabled')
+
+
+
+---------------------------".within()" ------------------
+
+SE USA PARA CUANDO SE REQUIERE BUSCAR ALGO DENTRO DE OTRA COSA, PARA QUE CYPRESS NO TENGA QUE 
+BUSCAR EN TODO EL DOM
+
+EN ESTE EJEMPLO, DENTRO DEL ELEMENTO "GRUDGE-INPUT", BUSCA EL ELEMENTO "INPUT" Y ESCRIBE
+        cy.getDataTest('grudge-input').within(() => {
+            cy.get('input').type('Some Grudge')
+        })
+
+
+EN ESTE EJEMPLO, DENTRO DEL ELEMENTO "GRUDGE-LIST", HAY UNA "ul" (UN-ORDERED LIST) QUE DENTRO DE ELLA
+CADA COSA Q AGREGE, SERÁ UNA "li" (LIST ITEM). ENTONCES AL USAR WITHIN, ESPECIFICO QUE DENTRO DE ESTA
+LISTA, OBTENGA TODOS LOS ITEMS ("li") Y QUE DEBERÍA TENER UNA CANTIDAD QUE YO ESPECIFICO.
+
+        cy.getDataTest('grudge-list').within(() => {
+            cy.get('li').should('have.length', 1)
+        })
+
+
+------------------------------------------------------------------------------------------
+-------------------------------------- DROPDOWNS -----------------------------------------
+------------------------------------------------------------------------------------------
+
+------------------------------------- STATIC DROPDOWNS -----------------------------------
+
+ 
+------------------------- .select() ----------------------------------
+
+PARA DROPDOWNS - SE PUEDEN SELECCIONAR POR INDEX, VALUE O TEXTO
+
+        cy.get('#month').select(1);         ---> CON INDEX
+        cy.get('#month').select('marzo');   ---> CON VALUE
+        cy.get('#month').select('octubre'); ---> CON TEXTO
+
+
+SE PUEDEN TAMBIÉN SELECCIONAR VARIAS OPCIONES A LA VEZ (EN EL CASO DE QUE SE PUEDA)
+
+	cy.get('#month').select(['marzo', 'octubre'])  ---> CON TEXTO
+
+	cy.get('select').select([0, 1]) ---> CON INDEX
+
+	cy.get('select').select(['456', '457']) ---> CON VALUE
+
+
+
+cy.its(), , cy.request(), cy.within()
+
+
+---------------------------------- DYNAMIC DROPDOWNS -------------------------------------
+
+CUANDO ES UNA UL (UN-ORDERED LIST) Y SON LISTAS DINÁMICAS BASADAS EN BUSQUEDA SE TIENE QUE CREAR UNA
+LISTA DE LOS DATOS QUE SE OBTIENEN EN LA BÚSQUEDA. PARA ESO SE USA .EACH()
+
+
+--------------------- .each() ---------------------------
+
+Iterar a través de una estructura similar a un array (arrays u objetos con una propiedad de longitud)
+
+EJEMPLO EN BOOKING BUSCANDO VUELOS DESDE LONDRES
+
+cy.visit('https://www.booking.com/flights/index.html');
+        cy.get('button[data-ui-name="input_location_from_segment_0"]').click();
+        cy.get('.Tags-module__text___90E7G').click();
+        cy.get('input[data-ui-name="input_text_autocomplete"]').clear().type('london');
+        cy.get('#flights-searchbox_suggestions li span:first-child b').each(($el, index, $list) => {
+            cy.log($el.text())
+            if($el.text().includes('LGW')) {
+                cy.wrap($el).click();
+            }
+        })
+
+MUY IMPORTANTE A LA HORA DE ENCONTRAR EL ELEMENTO EN EL DOM NO SER TAN ESPECÍFICO PARA NO GENERAR 
+PROBLEMAS FUTUROS
+
+------------------------------------------------------------------------------------------------
+---------------------------------------- CHECKBOXES --------------------------------------------
+------------------------------------------------------------------------------------------------
+
+SIEMPRE SON DE TIPO INPUT Y DE TYPE="CHECKBOX", Y POR LO GENERAL DEBEN TENER UN ATRIBUTO "value"
+PARA PODER ESPECIFICAR CUAL SELECCIONAR AUNQUE NO ES OBLIGATORIO
+
+SE PUEDE USAR TANTO "click()" COMO "check()"
+
+cy.get('[type="checkbox"]').check()    ---> SELECCIONA TODOS LOS CHECKBOXES 
+
+
+PARA USAR "click()" EN VARIAS CHECKBOXES HAY QUE AGREGAR EL PARÁMETRO "{multiple: true}"
+
+cy.get('input[type="checkbox"]').click({multiple: true});
+
+
+cy.get('[type="checkbox"]').first().check()  --> SELECCIONA EL PRIMER ELEMENTO
+
+
+PARA SELECCIONAR VARIOS, SE USA EL ATRIBUTO "VALUE" COMO PARAMETRO DE CHECK -->
+
+cy.get('input[type="checkbox"]').check(['red', 'orange', 'purple']);
+
+
+PARA DES-SELECCIONAR LAS CHECKBOXES SE USA "uncheck()" CON LAS MISMAS CARACT. QUE "check()"
+
+cy.get('[type="checkbox"]').uncheck()
+
+
+
+
+
+
+
+
+
+-------------------------------------------------------------------------------------------------
+-------------------------------------- RADIO BUTTONS -------------------------------------------
+------------------------------------------------------------------------------------------------
+
+SE UTILIZA .check COMO PARA LAS CHECKBOXES
+EL ELEMENTO TIENE QUE SER UN <INPUT> DE TIPO CHECKBOX O RADIO
+
+
+cy.get('input[type="radio"]').check('goods');
+
+cy.get('input[type="radio"][value="goods"]').check();   
+
+
+COMO HACER UNA ASSERTION :
+
+
+cy.get('input[type="radio"][value="goods"]').should('be.checked')
+
+
+ES BUENA PRÁCTICA TAMBIÉN CORROBORAR QUE ANTES DE SELECCIONARLO, NO ESTÉ SELECCIONADO
+
+
+cy.get('input[type="radio"][value="service"]').should('not.be.checked');
+
+
+------------------------------------------------------------------------------------------------
+----------------------------------CAROUSEL - SLIDER - CARRUSEL ---------------------------------
+------------------------------------------------------------------------------------------------
+
+El atributo data-bs-ride="carousel" se utiliza para marcar un carrusel como animado a partir de la
+carga de la página.
+
+TIENE 4 PARTES
+
+1-  UNA "<ol>" (ORGANIZED LIST) 
+
+2- UN <div> CON LAS IMÁGENES
+
+3- UN <a> (anchor) 
+
+4- BOTONES DE INTERACCIÓN
+
+
+
+
+
+
+
+
+-----------------------------------------------------------------------------------------------
+--------------------------------- ALERTS - ALERT - ALERTA -------------------------------------
+-----------------------------------------------------------------------------------------------
+
+Si tu aplicación muestra un cuadro de alerta , puedes usar el siguiente evento para capturarlo
+
+cy.on('window:alert', (alertText) => {
+expect(alertText).to.equal('exampleText')
+}
+
+No necesitas cerrar manualmente la alerta; Cypress lo hace automáticamente.
+
+
+
+-------- CUADROS DE ALERTA CON BOTONES DE ACEPTAR O CANCELAR
+
+Aceptar el cuadro de confirmación:
+
+cy.on('window:confirm', (confirmText) => {
+  // Verificar el texto del confirm
+  expect(confirmText).to.equal('¿Estás seguro?');
+  return true; // Simula hacer clic en "Aceptar"
+});
+
+
+Cancelar el cuadro de confirmación:
+
+cy.on('window:confirm', (confirmText) => {
+  // Verificar el texto del confirm
+  expect(confirmText).to.equal('¿Estás seguro?');
+  return false; // Simula hacer clic en "Cancelar"
+});
+
+------------------------------------------------------------------------------------------------------
+-----------------------------------------  MODALS - MODALES  -----------------------------------------
+------------------------------------------------------------------------------------------------------
+
+
+
+TRANSITIONS ---------------------------------------
+
+A LA HORA DE ABRIR UN MODAL, ME SUCEDE QUE MUCHAS VECES, DEBO ESPERAR A QUE HAGA LA TRANSICIÓN, POR LO
+QUE LA FORMA FÁCIL DE RESOLVERLO ES AGREGAR UN "CY.WAIT()" Y LISTO, PERO HAY OTRA MANERA
+
+PRIMERO -- COMPROBAR QUE LOS ATRIBUTOS TENGAN ESTAS PROPIEDADES:
+
+headerInstance.modals.modalContact
+      .container()
+      .should('have.class', 'show')             --> CLASS: SHOW
+      .and('have.css', 'display', 'block')      --> DISPLAY: BLOCK
+      .and('have.css', 'opacity', '1');         --> OPACITY: 1
+    headerInstance.modals.modalContact
+      .container()
+      .should('not.have.attr', 'aria-hidden', 'true');   --> ARIA-HIDDEN: FALSE
+
+SEGUNDO ---- CREAR UNA PROMESA PARA QUE SE RESUELVA SOLO CUANDO LA TRANSICIÓN FINALIZA:
+
+USANDO UN THEN()
+
+    headerInstance.modals.modalContact.container().then(($modal) => {
+      const modal = $modal[0];
+      return new Cypress.Promise((resolve) => {
+        modal.addEventListener('transitionend', resolve, { once: true });
+        cy.log('Transition Ended');
+      });
+    });
+
+
+OTRA MANERA PARA QUE SI LA TRANSITION NO TERMINA EN MODO HEADLESS, USAR UN TIME OUT PARA QUE CUMPLA 
+LA PROMESA DE TODAS FORMAS LUEGO DE UN TIEMPO ESPECÍFICO
+
+    headerInstance.modals.modalContact.container().then(($modal) => {
+      const modal = $modal[0];
+
+      return new Cypress.Promise((resolve) => {
+        const transitionEnded = () => {
+          cy.log('Transition Ended');
+          resolve();
+        };
+
+        // Escuchar el evento de transición
+        modal.addEventListener('transitionend', transitionEnded, {
+          once: true,
+        });
+
+        // Manejo de fallback: Si después de 1 segundo la transición no se dispara, resolvemos igual
+        setTimeout(() => {
+          cy.log('Fallback: Resolviendo por timeout');
+          resolve();
+        }, 1000);
+      });
+    });
+
+
+
+
+
+
+------------------------------------------------------------------------------------------------
+Tipos de Pruebas 
+
+PARA QUE SOLO CORRA UNA ÚNICA PRUEBA, USAR "it.only()"
+
+
+
+
+
+it('Test Suscribe Form', () => {
+        cy.contains(/Testing Forms/i).should('be.visible')    
+
+ cy.contains(/Successfully subbed: hello@howdy.com!/i).should('not.exist')
+        cy.get('[data-test="subscribe-button"]').click()
+        cy.contains(/Successfully subbed: hello@howdy.com!/i).should('exist')
+
+
+it('Accordion Works Correctly', () => {
+    cy.contains(/Your tests will exist in a describe block/i).should('not.be.visible')
+    cy.contains('p', 'Fundamental 1) Describe blocks').click()
+    cy.contains(/Your tests will exist in a describe block/i).should('be.visible')
+
+cy.location('pathname').should('equal', 'expectedPage')
+
+
+
+
+
+
+
+
+----------------------------------------------------------------------------------------------------------
+				        	ASSERTIONS 
+----------------------------------------------------------------------------------------------------------
+
+SE USA CHAI, QUE ES UNA BIBLIOTECA DE ASERCIONES UTILIZADA PARA VERIFICAR CONDICIONES EN LAS PRUEBAS
+ 
+
+HAY DOS TIPOS:
+
+- BDD: BEHAVIOR DRIVEN DEVELOPMENT            --> EXPECT() [Uso directo de Chai]
+
+
+- TDD: TEST DRIVEN DEVELOPMENT                --> SHOULD() [Forma parte de Cypress]
+
+
+
+SHOULD --> para pruebas que se centran en las interacciones técnicas y requieren menos explicación.
+
+EXPECT --> para escribir pruebas más expresivas y detalladas, especialmente para describir comportamientos
+desde la perspectiva del usuario.
+
+
+------------------ SHOULD -------------------------------------
+
+
+
+LENGTH --------
+cy.get('li.selected').should('have.length', 3)
+
+cy.get('ul li').its('length').should('be.gt', 2) // ensure the length is greater than 2
+
+cy.title().its('length').should('eq', 24)
+
+
+CLASS ---------
+cy.get('form').find('input').should('not.have.class', 'disabled')
+
+
+VALUE ---------
+cy.get('textarea').should('have.value', 'foo bar baz')
+
+TEXT CONTENT -------
+
+cy.get('[data-testid="user-name"]').should('have.text', 'Joe Smith')
+cy.get('[data-testid="address"]').should('include.text', 'Atlanta')
+cy.get('a').parent('span.help').should('not.contain', 'click me') ---> ? - VER TIPO DE BÚSQUEDA
+ [/ retry until this span does not contain 'click me']
+
+// the element's text should start with "Hello"
+cy.get('[data-testid="greeting"]').invoke('text').should('match', /^Hello/)
+
+
+VISIBILITY --------
+// retry until the element with
+// data-testid "form-submit" is visible
+cy.get('[data-testid="form-submit"]').should('be.visible')
+
+// retry until the list item with
+// text "write tests" is visible
+cy.contains('[data-testid="todo"] li', 'write tests').should('be.visible')
+
+
+EXISTENCE --------
+// retry until loading spinner no longer exists
+cy.get('[data-testid="loading"]').should('not.exist')
+
+STATE ------------
+
+// retry until our radio is checked
+cy.get(':radio').should('be.checked')
+
+
+CSS----------------
+
+// retry until element has matching css
+cy.get('[data-testid="completed"]').should('have.css', 'text-decoration', 'line-through')
+
+
+
+// retry while accordion css has the
+// "display: none" property
+cy.get('[data-testid="accordion"]').should('not.have.css', 'display', 'none')
+
+
+-----------------"should('have.attr', x, x)" -------------- 
+
+
+EN UN TEST DE UN LOGIN SUPER BÁSICO, PARA TESTEAR QUE CIERTO COMPONENTE TENGA UN ATRIBUTO
+
+it('should have password input of type password', () => {
+
+  mount(<LoginForm />)                 
+---> El método mount() permite probar el comportamiento del componente LoginForm de forma aislada
+
+  cy.contains('Password').find('input').should('have.attr', 'type', 'password')
+
+})
+
+ESTO SE LEE: expected <input> to have attribute TYPE with the value PASSWORD
+
+----------------".should('have.class', '.active')" -------------------
+DESPUÉS DE HACER CLICK EN UN BOTÓN, ESTE DEBERÍA TENER UNA CLASS QUE SEA "ACTIVE"
+
+
+cy.get('button').click()
+cy.get('button').should('have.class', '.active')
+
+ESTE TEST VA A PASAR, INCLUSIVE SI EL BOTÓN CAMBIA LUEGO DE ALGÚN TIEMPO, INCLUSIVE SI EL BOTÓN
+ES REMOVIDO COMPLETAMENTE POR UN TIEMPO, YA SEA XQ ES REEPLAZADO POR UN WAITING SPINNER, X EJEMPLO
+
+
+
+---------- ".should('have.css', 'example', 'value')" -------------------------
+
+.should('have.class', 'show').and('have.css', 'display', 'block').and('have.css', 'opacity', '1');
+
+
+
+
+
+--------------------------EXPECT() ------------------------------------------
+
+
+El uso de expect() requiere acceder a los valores mediante .then() ó en una iteración -each()-
+ó en cualquier callback, porque no está diseñado para trabajar directamente con el flujo 
+asíncrono de Cypress
+
+
+- ejemplo en should():
+
+   it('BDD Assertions', () => {
+
+        cy.get('input[type="radio"]').should(($inputs) => {
+            expect($inputs).to.have.lengthOf(3);
+            expect($inputs[2]).to.have.class('disabled');     ---> HAGO REFERENCIA AL 3er ELEMENTO
+        })
+    })
+
+La convención de usar $ en el nombre de la variable, como $inputs, es para indicar que esta variable 
+contiene elementos del DOM
+
+ 
+
+
+
+cy.request('https://reqres.in/api/users?page=2').should(response => {  
+        expect(response.body.data).to.have.length(6)
+        expect(response).to.have.property('headers')
+
+
+----------- IGNORAR MAYÚSCULAS Y MINÚSCULAS AL HACER ASSERTIONS --------------------
+
+SE PUDE HACER DE VARIAS MANERAS -
+
+USANDO toLowerCase() -->
+
+USANDO SHOULD() --> 
+
+cy.get('#example-modal-sizes-title-sm')
+  .should('contain.text', smallModalText.toLowerCase());
+
+USANDO EXPECT() -->  (EN EL CASO DE COMPARAR "Small modal" CON "Small Modal" [dif en la M] )
+
+cy.get('#example-modal-sizes-title-sm')
+  .invoke('text')                                ---> Extrae el texto completo del elemento
+  .then((actualText) => {
+    expect(actualText.trim().toLowerCase()).to.eq(smallModalText.toLowerCase());
+  });
+
+
+
+INTERCEPT -----------------
+
+EN EL CASO DE cy.intercept('POST', 'website.com/example', { body: { message: 'someText' } })
+INTERCEPTA EL POST Y NO LO ENVÍA, SINO QUE, EN SU LUGAR, ENVÍA EN ESTE CASO, EL HTML FILE CON EL 
+MENSAJE EN LA CONSOLA
+
+    it('Intercepts', () => {
+        cy.intercept("POST", 'http://localhost:3000/examples', {
+            body: {
+                message: 'Successfully Intercepted Request'
+            }
+        })
+        cy.get('[data-test="post-button"]').click()
+    })
+
+})
+
+
+GUARDAR ELEMENTOS DEL DOM EN VARIABLES (ALIAS) - ".as('name')"   -----------------------------------
+
+LOS ALIAS SOLO SE GUARDAN POR LA DURACIÓN DEL TEST
+
+        cy.getDataTest('subscribe-form').find('input').as('subscribe-input')
+        
+        cy.get('@subscribe-input').type('hello@howdy.com')
+
+
+
+
+
+--------------------- MOCK DATA PARA USAR CON INTERCEPTED REQUESTS --------------------
+
+SE PUEDEN GURDAR EN LA CARPETA CYPRESS, E2E, FIXTURES Y LUEGO USARSE PARA QUE DEVUELVA LA INFO QUE 
+YO QUIERA
+
+        cy.getDataTest('nav-examples').click()
+        cy.intercept("POST", 'http://localhost:3000/examples', {
+            //body: {
+            //    message: 'Successfully Intercepted Request'
+            //}
+            fixture: 'example.json'
+        })
+
+EN ESTE CASO EL FIXTURE ES:
+
+{
+  "name": "Using fixtures to represent data",
+  "email": "hello@cypress.io",
+  "body": "Fixtures are a great way to mock data for responses to routes"
+}
+
+
+----------------------------------------------------------------------------------------------------
+----------------------------------- <<< Page Object Model >>> --------------------------------------
+----------------------------------------------------------------------------------------------------
+
+
+SE CREA LA CARPETA "PAGES" EN LA CARPETA "SUPPORT"
+
+
+-------------------------------------- BASE PAGE -----------------------------------------------------
+
+EN ESTA PÁGINA SE CREAN LAS ACCIONES BÁSICAS - CLICK, TYPE, SEARCH -  QUE SE HARÁN EN LAS PÁGINAS SIGUIENTES
+
+DOUBLE CLICK 
+
+  clickOnWebElement(element) {
+    element.click();
+  }
+
+  fillTextBox(element, text) {
+    element.clear().type(text);
+  }
+}
+
+
+
+
+
+
+
+EJEMPLO DE LA PRIMERA PAGINA - LoginPage.js - :
+
+
+------------------------------------- LoginPage() -----------------------------------------------
+class LoginPage {
+
+
+  elements = {
+    textBoxUsername: () => cy.get('[data-test="username"]'),
+    textBoxPassword: () => cy.get('[data-test="password"]'),  --> RECORDAR NO PONER LOS "{ }"
+    btnLogin: () => cy.get('[data-test="login-button"]'),
+  };
+
+  fillTextboxUsername(username) {				       |    
+    this.elements.textBoxUsername().type(username);                    |
+  }          							       |
+  fillTextboxPassword(password) {				       |
+    this.elements.textBoxPassword(password);                           |----> METHODS 
+  }								       |	
+  clickBtnLogin() { 						       |	
+    this.elements.btnLogin().click();				       |	
+  }								       |
+
+}
+
+
+
+
+TERMINAR LAS CLASSES DE DOS MANERAS 
+
+1- [COMMONJS]
+
+module.exports = new LoginPage();   --->  - EXPORTO UNA INSTANCIA
+
+module.exports = new LoginPage;     ---> - EXPORTO LA CLASS - HAY QUE CREAR UNA INSTANCIA 
+					    
+EN EL TEST:
+
+const LoginPage = require('./loginPage');
+const loginPage = new LoginPage();
+
+
+
+2- [ES6]
+
+export default LoginPage();    --->  - EXPORTO UNA INSTANCIA
+
+export default LoginPage;      --->  - EXPORTO LA CLASS - HAY QUE CREAR UNA INSTANCIA
+
+EN EL TEST:
+
+const loginPage = new LoginPage();
+
+
+-------------------------------------------------------------------------
+modal-backdrop fade show
+body > div.modal-backdrop.fade.show
+-------------
+COMMONJS --->
+-------------
+
+sistema de módulos de CommonJS -module.exports- -require-
+
+CommonJS es el sistema de módulos tradicional usado por Node.js. Usa require para importar y module.exports para exportar.
+
+// loginPage.js
+class LoginPage {
+    // ...
+}
+
+module.exports = new LoginPage();
+
+// testFile.cy.js o cualquier otro archivo de Page Object
+const LoginPage = require('../pages/loginPage');
+
+EN EL ARCHIVO CYPRESS.CONFIG.JS:
+
+const { defineConfig } = require('cypress');
+
+module.exports = defineConfig({
+  e2e: {
+    baseUrl: 'https://www.demoblaze.com',
+    setupNodeEvents(on, config) {
+      // implement node event listeners here
+    },
+  },
+});
+
+
+
+----------------
+ES6 MODULES ---> 
+----------------
+
+EN EL ARCHIVO PACKAGE.JASON, CAMBIAR EL "type": "module"
+
+EN EL ARCHIVO CYPRESS.CONFIG.JS: 
+
+import { defineConfig } from 'cypress';
+
+export default defineConfig({
+  e2e: {
+    baseUrl: 'http://localhost:3000',
+	setupNodeEvents(on, config) {
+      // implement node event listeners here
+    },
+  },
+});
+  },
+});
+sintaxis de importación de ES6 -IMPORT- -EXPORT-
+
+ES Modules (ESM) es el sistema de módulos introducido en ECMAScript 2015 (ES6). Usa import y export para manejar módulos.
+
+Si mi package.json tiene "type": "module", debo usar sintaxis ESM en cypress.config.js:
+
+------------------------------------- EXPORTANDO CLASSES ----------------------------------------------
+
+-------------------------
+-- CREANDO INSTANCIAS --> 
+-------------------------
+
+AL EXPORTAR CLASSES, TENGO QUE CREAR INSTANCIAS SIEMPRE EN LOS ARCHIVOS 
+
+--------------------
+---VARIAS CLASES ---
+--------------------
+
+HAY DOS OPCIONES:
+
+1 - USO EXPORT DIRECTAMENTE AL CREAR LA CLASS EN EL ARCHIVO. NO PONGO NADA AL FINAL
+---------------------------------------------------
+
+EN LA PAGE HEADER -
+
+export class Header {
+    // ...
+}
+
+export class AnotherComponent {
+    // ...
+}
+
+EN EL ARCHIVO DONDE SE IMPORTA - 
+
+// En otro archivo
+import { Header } from '../components/header';        ---> CON {} PARA ESPECIFICAR QUE CLASS EXPORTO
+
+// O, si necesitas ambos:
+import { Header, AnotherComponent } from '../components/header';
+
+// Y luego crearías instancias si es necesario:
+
+const headerInstance = new Header();
+const anotherComponentInstance = new AnotherComponent();
+
+
+
+2 - USO EXPORT AL FINAL DEL ARCHIVO - OPCIONAL - ! CUIDADO ! DEPENDE DE LAS INSTANCIAS. 
+----------------------------------------
+
+export { Header, Footer }; // Exportando múltiples elementos
+
+
+
+--------------------
+--- 1 SOLA CLASS ---
+--------------------
+
+EXPORTO TODO EL ARCHIVO, CUANDO ES UNA SOLA CLASS. LO TERMINO CON 
+
+export default Header; 
+
+-------------------------------------------------------------------------------------------------
+
+-------------------------
+--- CREANDO OBJETOS ----> 
+------------------------- 
+
+EXPORTANDO OBJETOS SIN CREAR INSTANCIAS AL IMPORTAR ---> 
+
+
+// header.js
+
+class Header {
+    // ...
+}
+
+export default Header;
+
+
+// En otro archivo
+import Header from '../components/header';    -------> SIN {}
+
+// Luego, crearías una instancia:
+const headerInstance = new Header();
+
+-------------------------------------- EXPORTANDO OBJECTS ------------------------------------------------
+
+
+
+
+
+----------------------------------------- ProductsPage() ----------------------------------------------
+
+LUEGO CREO EL ARCHIVO PARA LA PAGE "ProductsPage" PARA IDENTIFICAR LO ELEMENTS Y USARLOS PARA 
+COMPROBAR EN EL TEST
+
+class ProductsPage {
+  elements = {
+    headerProducts: () => cy.get('[data-test="title"]'),
+  };
+}
+
+module.exports = new ProductsPage();
+
+
+------------------------------------------------------------------------------------------------------
+				 PERSONALIZAR INFO DE LOS METHODS 
+------------------------------------------------------------------------------------------------------
+
+CUANDO SE DESPLAZA POR ENCIMA DEL METHOD SE PUEDE HACER VER UN MENSAJE PERSONALIZADO
+
+EN LA PÁG DEL METHOD, ANTES DE ÉL SE ESCRIBE:
+
+/**
+*Perform fill operation with the provided username                 ---> MENSAJE QUE VA A APARECER
+* @param {string} username - The username to be used to login      ---> PARÁMETRO Y MENSAJE
+*/
+
+/**Perform Click Operation on Login Button                     ----> COMO ES CLICK, NO TIENE PARÁMETRO
+   */								SOLO SE LE AGREGA UNA DESCRIPCIÓN
+
+
+
+
+
+
+---------------------------------------------------------------------------------------------------
+---------------------------------------- ARCHIVOS TEST -------------------------------------------
+---------------------------------------------------------------------------------------------------
+
+EN LA CARPETA CYPRESS, EN E2E, SE ENCUENTRAN LAS TEST PAGES, EN RELACIÓN A LAS PAGES 
+
+EJEMPLO BÁSICO DE TESTS
+
+describe('fundamentals test', () => {         ---> NOMBRE DE LA EL TEST SUITE  
+  beforeEach(() => {                          ---> ANTES DE CADA PRUEBA
+  cy.visit('/fundamentals')
+
+  })
+  it('Contains Header Text', () => {          ---> "it" ES EL TEST, DENTRO EL NOMBRE DEL TEST 
+						   Y LUEGO UNA CALLBACK FUNCTION EN LA QUE DOY
+						   LOS PASOS A SEGUIR
+    cy.get('[data-test="fundamentals-header"]').should('contain.text', 'Testing Fundamentals')
+  })
+
+  it('Accordion Works Correctly', () => {
+    cy.contains(/Your tests will exist in a describe block/i).should('not.be.visible')
+    cy.contains('p', 'Fundamental 1) Describe blocks').click()
+    cy.contains(/Your tests will exist in a describe block/i).should('be.visible')
+    cy.get('p').contains('Fundamental 1) Describe blocks').click()
+    cy.contains(/Your tests will exist in a describe block/i).should('not.be.visible')
+
+
+  })
+})
+
+
+USANDO PAGE OBJECT MODEL [POM]
+
+EN EL ARCHIVO DEL TEST, HAY QUE IMPORTAR EL ARCHIVO DE LAS PAGES Y LOS QUE QUIERA USAR LOS METHODS
+
+import LoginPage from '../../support/pages/LoginPage'
+import ProductsPage form '../../support/pages/ProductsPage'
+
+
+describe("Sauce Demo - [LOGIN]", () => {
+  before (() => {
+    cy.goToApplication();
+  });
+
+>>const loginCredentials = require("/cypress/fixtures/loginCredentials.json");<< ALTERNATIVA
+  const loginCredentials = require("../../fixtures/loginCredentials.json");
+
+  const validUsername1 = loginCredentials.valid_username_1;
+  const validPassword1 = loginCredentials.valid_password_1;
+
+    it("@regression @sanity [POM]-[LOGIN] Login with valid credentials", () => {
+    LoginPage.fillTextboxUsername(validUsername1);
+    LoginPage.fillTextboxPassword(validPassword1);
+    LoginPage.clickBtnLogin();
+    
+    ProductsPage.elements.headerProducts().should("have.text", "Products");
+    cy.url().should("eq", "https://www.saucedemo.com/inventory.html");
+    });
+
+
+------------------------------------------------------------------------------------------------------
+
+
+--------------------------------------- ITERAR INFO --------------------------------------------------
+
+EN CASOS QUE SE TENGA QUE REPETIR LOS TESTS, COMO EN UN LOGIN SCENARIO SE PUEDE CREAR UN LOOP PARA ITERAR
+CON INFORMACIÓN DISTINTA DESDE UN JSON FILE
+
+
+
+CREAR UN ARCHIVO JSON EN FIXTURES CON LA INFORMACIÓN QUE QUIERO ITERAR. EN ESTE CASO DIFERENTES LOGIN CASES
+
+[
+    {
+        "name": "Login using valid Credentials",                        -----> NOMBRE DE LA PRUEBA
+        "username": "standard_user",
+        "password": "secret_sauce",
+        "expected": "Products"                                          -----> RESULTADO ESPERADO
+    },
+    {
+        "name": "Invalid Login using Bloqued User",
+        "username": "locked_out_user",
+        "password": "secret_sauce",
+        "expected": "locked out"
+    },
+    {
+        "name": "Invalid Login using invalid User",
+        "username": "dummyUsername",
+        "password": "secret_sauce",
+        "expected": "Username and password do not match any user"
+    },
+    {
+        "name": "Invalid Login using invalid Password",
+        "username": "standard_user",
+        "password": "asldfksdfsa",
+        "expected": "Username and password do not match any user "
+    }
+
+
+]
+
+EN LA PÁGINA DEL TEST : 
+
+
+import homePage from "../../pages/sauceDemo/homePage";                   ---> IMPORTO LAS PAGES
+import inventoryPage from "../../pages/sauceDemo/inventoryPage";
+
+
+const tests = require('../../fixtures/saucedemo/sauceUsers.json');     ---> CREO VARIABLE CON JSON FILE
+
+describe('Home Sauce Demo', () => {
+
+    beforeEach(() => {
+
+        cy.visit('https://www.saucedemo.com/');
+        cy.window().then((win) => {                                  ---> NO ESPERA A QUE LA PÁG CARGUE
+            win.location.href = 'https://www.saucedemo.com';		 X COMPLETO [MUY ÚTIL]
+          });
+        
+    });
+
+    tests.forEach((test) => {                                   ---> SE ITERA POR CADA OBJETO
+
+        it(test.name, () => {
+            homePage.login(test.username, test.password);
+
+
+// USO UN IF STATEMENT PARA ITERAR POR LOS EXPECTED RESULTS
+
+
+            if(test.name === 'Login using valid Credentials'){             
+                inventoryPage.elements.titleSpan().should('contain.text', test.expected)
+            } else {
+                homePage.elements.errorMessage().should('contain.text', test.expected)
+            }
+        })
+
+        
+        
+    });
+
+
+})
+
+------------------------ HEADERS Y FOOTERS - APPLICATION COMPONENTS --------------------------
+
+HAY COMPONENTES QUE SIEMPRE ESTÁN PRESENTES EN TODAS LAS PAGINAS DENTRO DE ESA WEB. 
+
+LOS HEADERS Y FOOTERS, POR LO GENERAL, DEPENDIENDO DE LA PÁGINA, SIEMPRE ESTAN.
+
+PARA NO REPETIR LOS ELEMENTOS DENTRO DE ELLOS EN CADA PÁGINA, SE CREAN LOS ARCHIVOS PARA CADA UNO.
+
+HACER UNA CARPETA DENTRO DE PAGES LLAMADA "COMPONENTS"
+
+DENTRO DE LA CARPETA, CREAR LOS ARCHIVOS
+
+HEADERS.JS
+
+FOOTERS.JS 
+
+
+
+
+
+
+ 
+
+
+
+----------------------------------------------------------------------------------------------------
+
+------------------------------ COMPONENT TESTING -------------------------------------------------
+
+ELEJIR SIEMPRE NEXT.JS 
+
+EN LA ARCHIVO cypress.config.js SE AGREGA LA PARTE DE "component" 
+
+EN LA CARPETA CYPRESS, SE CREA UNA SUB CARPETA "COMPONENT" DONDE SE HARÁ EL COMPONENT TESTING
+
+EJEMPLO :
+ES IGUAL A UN E2E TEST PERO SOLO SE MONTA EL COMPONENTE A PONER A PRUEBA, SIN TENER QUE CARGAR
+TODA LA PÁGINA WEB Y TENER QUE DESPLAZARSE HASTA EL COMPONENTE A PROBAR
+
+
+describe('Accordion.cy.jsx', () => {
+  it('playground', () => {
+    cy.mount(<ItemsAccordion items={}/>)
+  })
+})
+
+
+
+---------------------------------------------------------------------------------------------------
+			       UTILIDADES PARA TESTS DESDE EL CONFIG FILE
+---------------------------------------------------------------------------------------------------
+
+
+					
+---------------------------------------- SETEAR LAS RETRIES --------------------------------------
+
+CUANDO UN TEST FALLA, SE PUEDE ESPECIFICAR CUANTAS VECES SE PUEDE VOLVER A EJECUTAR
+
+EN EL ARCHIVO "cypress.config.js"
+
+DENTRO DEL "module.exports = defineConfig()"
+
+module.exports = defineConfig({
+
+  retries: 1,         ----> ESPECIFICO LA CANTIDAD DE VECES PARA VOLVER A EJECUTAR EL TEST
+
+
+
+
+--------------------------------- CAMBIAR LAS DIMENSIONES -----------------------------------
+
+EN EL ARCHIVO "cypress.config.js"
+
+DENTRO DEL "module.exports = defineConfig()"
+
+module.exports = defineConfig({
+
+  viewportHeight: 760,
+  viewportWidth: 1100,
+
+
+---------------------------------------- HACER UN VID -----------------------------------------
+
+EN EL ARCHIVO "cypress.config.js"
+
+DENTRO DEL "module.exports = defineConfig()"
+
+module.exports = defineConfig({
+
+  video: true,  
+  videoCompression: true,      ---> PARA QUE NO PESE TANTO
+
+
+--------------------------------------------------------------------------------------------------
+------------------------------------ CI/CD - GITHUB ACTIONS ---------------------------------
+--------------------------------------------------------------------------------------------------
+
+
+CREO UNA CARPETA EN EL ROOT ".github" Y DENTRO CREO OTRA CARPETA "workflows"
+
+CREO UN ARCHIVO ".yml"
+
+EN ESTE EJEMPLO :
+
+01_ui_tests_chrome.yml
+
+
+LO QUE HACE GITHUB ACTIONS TOMA LA INFO DEL YML FILE Y EJECUTA LOS TESTS DE MANERA AUTOMATIZADA EN GITHUB
+CADA VEZ QUE SE SUBE UN CAMBIO EN LA BRANCH
+
+EN EL ARCHIVO YML:
+
+
+#For tests execution
+
+#Machine
+
+#Softwares to be installed (node js)
+
+#Need to execute the tests
+
+#######################################
+
+name: 01_Pre-defined Browser Chrome
+
+#Events
+on:
+  #Manual trigger
+  workflow_dispatch:
+
+  #Trigger on push to the master branch				--> !OJO! ESTO ACTIVA EL TEST EN EL REPOSITORIO
+  push:								CADA VEZ QUE SE HACE UN CAMBIO
+    branches:
+      - master
+
+  #Trigger on pull request to the master brach			--> !OJO! ESTO ACTIVA EL TEST EN EL REPOSITORIO
+  pull_request:							CADA VEZ QUE SE HACE UN CAMBIO
+    branches:
+      - master
+
+jobs:
+  ui_tests_chrome:
+    runs-on: ubuntu-latest
+
+    steps:
+      #Step 1: Checking out the code from Github repo to the machine (ubuntu-latest)
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      #Step 2: Installing node.js
+      - name: Install Node.js
+        uses: actions/setup-node@v2
+        with:
+          node-version: 22
+
+      #Step 3: Installing dependecies for Cypress
+      - name: Installing dependencies for Cypress
+        run: npm ci
+
+      #Step 4: Run Cypress tests on Chrome browser
+      - name: Run Cypress UI tests
+        run: npm run cy:tests:CHROME
+
+      #Step 5: Upload Test reports as artifacts
+      - name: Upload reports
+        uses: actions/upload-artifact@v4
+        with:
+          name: UI Tests Report
+          path: cypress/reports
+
+
+
+
+github/workflows/01_ui_tests_chrome.yml
+
+
+
+
+---------------------------------------------------------------------------------------------------
+---------------------------------------------- COMANDOS GIT ---------------------------------------
+---------------------------------------------------------------------------------------------------
+
+1RO - DESCARGAR GIT DESDE:
+
+ https://git-scm.com/downloads/win
+
+PARA COPIAR EL PROYECTO A GITHUB [CREAR UN REPOSITORIO] :
+ASEGURARSE QUE LA CONSOLA ESTÉ EN LA CARPETA DEL PROYECTO
+
+1º ---- PRIMERO TENGO QUE LOGEARME DESDE LA CONSOLA A MI CUENTA DE GITHUB [ DE 2 MANERAS ]
+
+git config --global user.email "you@example.com"
+
+git config --global user.name "Your Name"
+
+2º ---- CREAR ARCHIVO .gitignore EN LA RAIZ DEL PROYECTO Y AGREGAR :
+
+node_modules
+
+git init   ---> Esto inicializa un repositorio Git local en tu carpeta de proyecto.
+
+git add . ----> Agrega los archivos a tu repositorio local
+
+git commit -m "Initial Commit" ----> SOLO SI YA ESTÁ CONECTADO A UN REPOSITORIO EN GITHUB
+
+
+RECORDAR QUE CADA CAMBIO QUE HAGO EN EL PROYECTO ES BUENO HACER COMMIT CON UN COMENTARIO PARA DEJAR
+REGISTRO DE CADA CAMBIO [EN EL CASO QUE CREA NECESARIO DEJAR REGISTRO DEL CAMBIO]
+
+
+
+
+--------------------------------- CREAR REPOSITORIO Y CONECTAR -----------------------------------------
+---------- Opción 1: Crear el repositorio directamente en GitHub y luego conectarlo
+
+1º- Crea el repositorio en GitHub ----------
+
+2º- Conecta tu repositorio local al remoto ----------
+
+git remote add origin https://github.com/usuario/nombre-repositorio.git
+
+3º- Sube tus cambios----------------
+
+git push -u origin main
+
+
+---------- Opción 2: Crear el repositorio directamente desde la consola
+
+Puedes crear un repositorio en GitHub desde tu terminal si usas la API de GitHub o herramientas 
+como GitHub CLI. Aquí te explico cómo usar GitHub CLI:
+
+1º- Instala GitHub CLI----------------------
+
+Descárgalo desde cli.github.com.
+
+2º- Autentícate en GitHub CLI---------------
+En la consola, ejecuta:
+
+gh auth login
+
+Sigue las instrucciones para autenticarte.
+
+3º- Crea el repositorio desde la terminal---------------
+
+Navega a tu carpeta de proyecto y ejecuta:
+
+gh repo create nombre-repositorio
+
+Esto te permitirá:
+
+Crear el repositorio en GitHub.
+Vincular automáticamente tu repositorio local al remoto.
+
+4. Sube los cambios--------------
+Si no lo hace automáticamente, sube los cambios:
+
+git push -u origin main(o master)                    ----> OJO QUE USA "-u" QUE ENLAZA LA RAMA LOCAL
+							   CON LA RAMA REMOTA EN GITHUB (VER PUSH)
+---------------- -------------------------------------------------------------------------------------
+
+LA LÓGICA DE GIT ES 
+
+CAMBIO --> AGREGO AL ÁREA DE PREPARACIÓN [STAGING AREA] --> HAGO COMMIT [CONFIRMO CAMBIOS] ---> PUSH
+
+
+
+------------------------- ADD ---------------------------------
+
+AGREGA LOS ARCHIVOS MODIFICADOS AL ÁREA DE PREPARACIÓN LOCAL [STAGING AREA]
+
+PARA AGREGAR LOS CAMBIOS DE TODOS LOS ARCHIVOS MODIFICADOS --> 
+
+git add .
+
+PARA AGREGAR LOS CAMBIOS DE UN ARCHIVO ESPECÍFICO ---> 
+
+git add <fileName>
+
+-------------------------- RESET ----------------------------
+
+git reset <archivo> 
+
+Deshace los cambios en un archivo o archivos antes de hacer commit, eliminándolos del área de preparación (staging area).
+
+------------------------- COMMIT ----------------------------
+
+ACTUALIZA EL CACHÉ LOCAL CON LOS CAMBIOS Y UN MENSAJE 
+
+EL FLAG -m PERMITE AGREGAR UN MENSAJE QUE DESCRIBA LOS CAMBIOS REALIZADOS
+
+git commit -m "Corrige el diseño del encabezado en index.html"
+
+
+HACE UN COMMIT SIN HACER UN ADD PRIMERO ---> 
+
+
+git commit -a -m "Actualiza el archivo README"
+
+
+
+
+----------------------- RAMAS [BRANCHES] -----------------------------
+
+git branch ---> MUESTRA TODAS LAS RAMAS LOCALES Y * EN LA QUE ESTÁ ACTUALMENTE ACTIVA
+
+git branch -r ----> MUESTRA TODAS LAS RAMAS REMOTAS 
+
+git branch -a ---> MUESTRA TODAS LAS RAMAS 
+
+
+git checkout main ---> CAMBIA A LA RAMA ESPECIFICADA
+
+
+
+
+
+
+
+
+
+------ PARA BORRAR UNA CARPETA O ARCHIVO DEL REPOSITORIO EN GITHUB  ----> 
+
+1º-----> ELIMINA LA CARPETA DE node_modules DE GITHUB
+
+git rm -r --cached node_modules          -----> ELIMINA UNA CARPETA COMPLETA DEL SEGIMIENTO DE GIT 
+
+Esto elimina la carpeta node_modules del índice (sin eliminarla físicamente de tu sistema). 
+
+2º ----> Confirma los cambios (CADA ACCIÓN LA REGISTRO EN EL REPOSITORIO LOCAL)
+
+git commit -m "Elimina node_modules del repositorio"
+
+3º ------> AGREGO LA CARPETA AL ARCHIVO .gitignore Y HAGO OTRO COMMIT
+
+EN EL ARCHIVO AGREGO :   node_modules/
+
+git commit -m "Agrego node_modules a .gitignore" 
+
+4º -----> SUBO LOS CAMBIOS AL REPOSITORIO GITHUB
+
+git push
+
+EN EL CASO DE NO TENER EL ARCHIVO .gitignore-------
+
+1º ---> CREARLO EN LA RAIZ DEL PROYECTO ".gitignore"
+
+2º ---> LUEGO ACTUALIZAR LOS CAMBIOS:
+
+git add .gitignore --->   
+
+4º ----> CONFIRMO LOS CAMBIOS (COMMIT REPOSITORIO LOCAL)
+
+git commit -m "Agrega .gitignore para ignorar node_modules"
+
+5º ----> SUBO LOS CAMBIOS AL REPOSITORIO GITHUB
+
+git push
+
+-------------------------------------------------------------------
+
+
+--------- ELIMINACIÓN DE ARCHIVOS Y CARPETAS DEL REPOSITORIO EN GITHUB --->  
+
+git rm --cached package-lock.json       ---> ELIMINA EL ARCHIVO DEL CACHÉ PARA CUANDO HAGA EL PUSH, NO ESTÉ 
+					      Elimina el archivo del índice de Git sin borrarlo del disco
+ARCHIVOS -->
+git rm --cached <fileName> ---> Si solo necesitas dejar de rastrear un archivo específico.
+
+CARPETAS -->
+git rm -r --cached <folderName> ---> Si necesitas dejar de rastrear una carpeta completa o un conjunto de archivos
+
+Después de ejecutar cualquiera de estos comandos, asegúrate de agregar el archivo o carpeta al .gitignore para que Git no vuelva a rastrearlos.
+
+------------------------------------------------------------------
+
+
+--------------------- FETCH ---------------------------------
+
+git fetch [<remoto>] [<rama>]
+
+Obtiene actualizaciones de un repositorio remoto y trae los cambios a tu repositorio local SIN APLICARLOS automáticamente a tu rama activa. Es una operación "segura" porque no modifica directamente tu código local ni mezcla cambios.
+
+Ejemplo 1: Obtener todos los cambios del repositorio remoto:
+
+git fetch origin
+
+Ejemplo 2: Obtener una rama específica del remoto:
+
+git fetch origin master(O EL NOMBRE DE LA RAMAEN CUESTIÓN)
+
+
+------- Para ver el contenido obtenido ---------->
+
+git log origin/master
+
+
+-------- Para aplicar los cambios en tu rama activa ----->
+
+git merge origin/master
+
+
+--------------------- PULL ----------------------------
+
+TRAE LOS CAMBIOS DEL REPOSITORIO REMOTO AL LOCAL
+
+git pull <remoto> <rama>
+
+<remoto>: El nombre del repositorio remoto (por defecto es origin).
+<rama>: La rama que deseas actualizar en el remoto (por defecto es la rama actual) EJ: "master".
+
+
+git pull
+
+Es un atajo para git fetch seguido de git merge. Trae los cambios y los aplica automáticamente.
+
+PARA ENLAZAR LA RAMA LOCAL CON LA RAMA REMOTA Y NO ESPECIFICAR CADA VEZ LA RAMA QUE SE QUIERE HACER PULL 
+
+git pull -u <remoto> <rama>  --------> SE LE AGREGA EL FLAG "-u" (--upstream)
+
+LUEGO NO ES NECESARIO ESPECIFICAR EL REPOSITORIO Y LA RAMA, USO DIRECTAMENTE
+
+git pull 
+
+PARA DESASOCIAR LAS RAMAS :
+
+git branch --unset-upstream
+
+------------------- PUSH -----------------------------
+
+ENVÍA LOS CAMBIOS DEL REPOSITORIO LOCAL AL REMOTO
+
+git push <remoto> <rama>
+
+<remoto>: El nombre del repositorio remoto (por defecto es origin).
+<rama>: La rama que deseas actualizar en el remoto (por defecto es la rama actual) EJ: "master".
+
+
+PARA ENLAZAR LA RAMA LOCAL CON LA RAMA REMOTA Y NO ESPECIFICAR CADA VEZ LA RAMA QUE SE QUIERE HACER PUSH
+
+git push -u origin <rama> ----> SE LE AGREGA EL FLAG "-u"
+
+LUEGO NO ES NECESARIO ESPECIFICAR EL REPOSITORIO Y LA RAMA, USO DIRECTAMENTE
+
+git push 
+
+
+PARA DESASOCIAR LAS RAMAS :
+
+git branch --unset-upstream
+
+
+---------------------- STATUS ----------------------
+
+git status --------> ES PARA VER EL ESTADO DE LOS ARCHIVOS EN EL REPOSITORIO LOCAL
+
+-------------------- LOG -----------------------
+
+MUESTRA EL HISTORIAL DE COMMITS
+
+git log
+
+PARA OBTENER UNA LISTA MÁS COMPACTA 
+
+git log --oneline
+
+
+--------------- STASH ----------------
+
+git stash Guarda temporalmente los cambios que no deseas comprometer en ese momento, 
+y permite volver a un estado limpio del repositorio.
+
+git stash
+
+Para aplicar los cambios guardados en el stash:
+
+git stash apply
+
+
+
+
+
+
+
+
+----------------------------------------------------------------------------------------------------
+-------------------------------- PROBLEMAS VARIOS - SOLUCIONES -------------------------------------
+----------------------------------------------------------------------------------------------------
+
+
+
+
+----------- PÁGINA NO CARGA COMPLETAMENTE IMPIDIENDO QUE CYPRESS CONTINÚE LAS PRUEBAS --------------
+
+Fuerza la navegación sin cargar completamente la página
+
+
+    beforeEach(() => {
+
+        cy.visit('https://www.saucedemo.com/');
+        cy.window().then((win) => {                             
+            win.location.href = 'https://www.saucedemo.com';
+          });
+
+
+--------- PÁGINA TIRA ERRORES DE TIPO UNCAUGHT EXCEPTION ERROR: MODAL IS TRANSITIONING  ---------------
+
+AL AGREGAR "then()" Y "return new Cypress.promise()" ES QUE SE PAUSA LA PRUEBA HASTA QUE SE CUMPLA LA PROMESA
+DE QUE TERMINA DE CARGARSE LA TRANSICIÓN 
+
+headerInstance.modalContact.container().then(($modal) => {
+      const modal = $modal[0];                                   --> CONVIERTO EL OBJETO EN UN ELEMENTO NATIVO
+      return new Cypress.Promise((resolve) => {                  --> PARA USARLO CON EL "addEventListener"
+        modal.addEventListener('transitionend', resolve, { once: true }); 
+      });
+    });
+
+headerInstance.modalContact.header.btnClose().click();
+
+--------------- const modal = $modal[0];
+
+¿Qué hace?
+Convierte el objeto de Cypress ($modal) en un elemento DOM nativo. Esto es necesario porque el método addEventListener no funciona directamente con objetos de Cypress.
+
+Resultado:
+La variable modal contiene el elemento DOM nativo del contenedor del modal.
+
+-------------- new Cypress.Promise((resolve) => { ... });
+
+¿Qué hace?
+Crea una nueva promesa de Cypress. Las promesas permiten manejar eventos asíncronos de manera explícita, y en este caso, estamos esperando que se complete la transición del modal antes de continuar con la prueba.
+
+Resultado:
+Cypress pausa la ejecución del siguiente paso hasta que esta promesa se resuelva.
+
+-------------- modal.addEventListener('transitionend', resolve, { once: true });
+
+¿Qué hace?
+Añade un listener al evento transitionend del elemento modal. Este evento se dispara automáticamente cuando finaliza cualquier animación o transición CSS en el modal.
+
+resolve: Llama al resolver de la promesa, indicando que la transición terminó y que es seguro continuar.
+{ once: true }: Configura el listener para que se ejecute una sola vez y se elimine automáticamente después de que se active.
+
+Resultado:
+La promesa se resuelve una vez que termina la transición, asegurando que el modal esté completamente estable antes de intentar interactuar con él.
+
+----------------------------------- ¿Qué podrías ajustar o mejorar?------------------------------------
+
+Si este patrón es común en tus pruebas, podrías crear un comando personalizado para no repetir el código cada vez que trabajes con modales:
+
+
+Cypress.Commands.add('waitForTransition', (element) => {
+  return cy.wrap(element).then(($el) => {
+    const el = $el[0];
+    return new Cypress.Promise((resolve) => {
+      el.addEventListener('transitionend', resolve, { once: true });
+    });
+  });
+});
+
+
+Uso:
+
+cy.waitForTransition(headerInstance.modalContact.container());
+headerInstance.modalContact.header.btnClose().click();
+
+
+
+
+
+
+
+
+OTRA OPCIÓN ---> 
+CUIDADO !! IGNORA EL ERROR Y SIGUE LA PRUEBA, PERO NO REALIZA LA ACCIÓN DE HACER EL CLICK.
+
+EN EL ARCHIVO e2e.js EN SUPPORT, AGREGAR ---> 
+
+Cypress.on('uncaught:exception', (err) => {
+    if (err.message.includes('Modal is transitioning')) {
+      // Ignora errores relacionados con la transición del modal
+      return false;
+    }
+    // Lanza cualquier otro error
+    throw err;
+  });
+
+PARA MANEJAR EL ERROR SOLO EN UNA PRUEBA ESPECÍFICA ---> 
+
+escribe('Pruebas del modal', () => {
+  it('Debería abrir y cerrar el modal correctamente', () => {
+    Cypress.on('uncaught:exception', (err) => {
+      if (err.message.includes('Modal is transitioning')) {
+        return false; // Ignora este error en esta prueba
+      }
+      throw err;
+    });
+
+
+
+
+
+-------- PÁGINA TIRA ERRORES DE TIPO UNCAUGHT EXCEPTION POR ANUNCIOS Y IFRAMES ---------------
+
+
+ERROR------>  
+
+(uncaught exception)Error: Script error. Cypress detected that an uncaught error was thrown from a cross origin script. We cannot provide you the stack trace, line number, or file where this error occurred. Check your Developer Tools Console for the actual error - it should be printed there. It's possible to enable debugging these scripts by adding the crossorigin attribute and setting a CORS header
+
+SOLUCIÓN--->
+
+EN LA CARPETA SUPPORT, EN EL ARCHIVO e2e.js, AGREGAR ---->
+
+
+
+!!!!!!!! CUIDADO CON ESTA QUE EVITA QUE FALLE POR CUALQUIER ERROR UNCAUGHT EXEPTION !!!!!!!!!!!!!!!!
+
+Cypress.on('uncaught:exception', (err, runnable) => {
+  // Retorna false para evitar que Cypress falle por excepciones no controladas
+  return false;
+});
+
+SE PUEDE ESPECIFICAR QUE TIPO DE ERROR (NO FUNCIONAN EN CIERTAS SITUACIONES) ---> 
+
+Cypress.on('uncaught:exception', (err, runnable) => {
+  // Si el error proviene de un iframe de anuncios, lo ignoramos
+  if (err.message.includes('ads') || err.message.includes('iframe')) {
+    return false;
+  }
+  return true; // Si no, dejar que el test falle
+});
+
+OTRO TIPO --> 
+
+Cypress.on('uncaught:exception', (err, runnable) => {
+  // Si el error está relacionado con anuncios o iframes, lo ignoramos
+  if (err.message.includes('ads') || err.stack.includes('iframe')) {
+    return false;
+  }
+  // Para otros errores, permitimos que el test falle
+  return true;
+});
+
+------------ SEO -------------------------------------------------------------------
+
+Search Engine Optimization (Optimización para Motores de Búsqueda)
+
+
+
+
+
+
+
+
+
+
+
+
+
