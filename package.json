@@ -9,7 +9,7 @@
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "cy:open": "cypress open",
-    "cy:tests:CHROME": "cypress run --spec cypress/e2e/*.cy.js --headed --browser chrome",
+    "cy:tests:CHROME": "cypress run --spec cypress/e2e/HeaderPOM.cy.js --headless --browser chrome",
     "cy:tests:ELECTRON": "cypress run --spec cypress/e2e/*.cy.js --headed",
     "cy:tests:EDGE": "cypress run --spec cypress/e2e/*.cy.js --headed --browser edge"
   },

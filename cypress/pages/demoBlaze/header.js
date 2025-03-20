@@ -87,7 +87,27 @@ export class Header {
   };
 
   actions = {
-    nav: {
+    waitForModalTransition: (element) => {
+      element.then(($modal) => {
+        const modal = $modal[0];
+        return new Cypress.Promise((resolve) => {
+          const transitionEnded = () => {
+            cy.log('Transition Ended');
+            resolve();
+          };
+          modal.addEventListener('transitionend', transitionEnded, {
+            once: true,
+          });
+
+          setTimeout(() => {
+            cy.log('Fallback: Resolviendo por Timeout');
+            resolve();
+          }, 1000);
+        });
+      });
+    },
+
+    navBar: {
       clickLinkBrand: () => this.navBar.linkBrand().click(),
       clickLinkHome: () => this.navBar.linkHome().click(),
       clickLinkContact: () => this.navBar.linkContact().click(),
@@ -95,6 +115,26 @@ export class Header {
       clickLinkCart: () => this.navBar.linkCart().click(),
       clickLinkLogin: () => this.navBar.linkLogin().click(),
       clickLinkSignup: () => this.navBar.linkSignUp().click(),
+    },
+
+    modalContact: {
+      closeModalFromHeader: () =>
+        this.modals.modalContact.header.btnCloseIcon().click(),
+      clickOnSendMessage: () =>
+        this.modals.modalContact.footer.btnSendMessage().click(),
+
+      fillContactInfo: (email, contactName, message) => {
+        cy.wait(1000);
+        this.modals.modalContact.body.inputEmail().type(email);
+        this.modals.modalContact.body.inputName().type(contactName);
+        this.modals.modalContact.body.inputMessage().type(message);
+      },
+
+      sendContactMessage: (email, contactName, message) => {
+        this.actions.navBar.clickLinkContact();
+        this.actions.modalContact.fillContactInfo(email, contactName, message);
+        this.actions.modalContact.clickOnSendMessage();
+      },
     },
   };
 }

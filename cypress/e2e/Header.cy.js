@@ -34,7 +34,7 @@ describe('Header Test', () => {
         cy.log('Transition Ended');
       });
     });
-
+    //cy.wait(1000);
     headerInstance.modals.modalContact.header.btnCloseIcon().click();
   });
 
@@ -59,6 +59,7 @@ describe('Header Test', () => {
       });
     });
 
+    //cy.wait(1000);
     headerInstance.modals.modalContact.footer.btnCloseFooter().click();
   });
 
@@ -83,6 +84,7 @@ describe('Header Test', () => {
       });
     });
 
+    cy.wait(1000);
     headerInstance.modals.modalContact.body
       .inputEmail()
       .type('joedoe@example.com');
@@ -118,6 +120,7 @@ describe('Header Test', () => {
       });
     });
 
+    //cy.wait(1000);
     headerInstance.modals.modalAboutUs.footer.btnClose().click();
     headerInstance.modals.modalAboutUs.header
       .headerTitle()
